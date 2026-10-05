@@ -26,7 +26,7 @@
       --input-bg: #0d1527;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 4px; padding-bottom: 60px; }
+    body { background-color: var(--bg); color: var(--text); padding: 4px; padding-bottom: 60px; overflow-x: hidden; }
     
     .container { max-width: 900px; margin: 0 auto; }
 
@@ -84,24 +84,54 @@
     .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
     .section-header { padding: 6px 8px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; }
 
-    /* --- SLIMMAT OCH RYMLIGT RUTNÄT --- */
-    .row-grid {
-      display: grid;
-      /* Drag(16px) | Beskrivning(1fr) | Ant(34px) | Á-pris(56px) | Sk(22px) | Summa(62px) | Ta bort(16px) */
-      grid-template-columns: 16px minmax(90px, 1fr) 34px 56px 22px 62px 16px;
-      gap: 3px;
-      padding: 4px 6px;
-      align-items: center;
+    /* --- SWIPE CONTAINER PER RAD --- */
+    .swipe-wrapper {
+      position: relative;
+      overflow: hidden;
+      background: #111827;
       border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .swipe-bg-left, .swipe-bg-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: white;
+    }
+    .swipe-bg-left {
+      background: var(--danger);
+      justify-content: flex-end;
+    }
+    .swipe-bg-right {
+      background: var(--accent);
+      justify-content: flex-start;
+    }
+
+    /* Rutnät med full plats till text & tal: Drag | Beskrivning | Ant | Á-pris | Sk | Summa */
+    .row-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 18px minmax(95px, 1fr) 36px 58px 24px 70px;
+      gap: 4px;
+      padding: 5px 6px;
+      align-items: center;
       background: var(--card);
+      transition: transform 0.15s ease-out;
+      z-index: 2;
     }
     .row-header {
-      font-size: 0.6rem;
+      font-size: 0.62rem;
       color: var(--muted);
       text-transform: uppercase;
       font-weight: 700;
       background: rgba(0,0,0,0.25);
-      padding: 3px 6px;
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
 
     input, select { 
@@ -109,7 +139,7 @@
       border: 1px solid var(--border); 
       color: var(--text); 
       border-radius: 4px; 
-      padding: 5px 3px; 
+      padding: 5px 4px; 
       font-size: 0.78rem; 
       width: 100%; 
       outline: none; 
@@ -118,14 +148,14 @@
     input:focus { border-color: var(--accent); }
     input[type="number"] { text-align: right; }
 
-    /* Super-kompakt Skatteknapp */
+    /* Kompakt Skatteknapp */
     .btn-tax-toggle {
-      width: 22px;
+      width: 24px;
       height: 24px;
-      border-radius: 3px;
+      border-radius: 4px;
       border: 1px solid transparent;
       font-weight: 800;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -135,22 +165,16 @@
     .tax-table { background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
     .tax-onetime { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
     .tax-benefit { background: rgba(168, 85, 247, 0.2); color: #c084fc; border-color: rgba(168, 85, 247, 0.4); }
-    .tax-none { background: transparent; border: none; cursor: default; }
 
-    .col-sum { text-align: right; font-weight: 700; font-size: 0.76rem; white-space: nowrap; overflow: hidden; }
+    .col-sum { text-align: right; font-weight: 700; font-size: 0.78rem; white-space: nowrap; overflow: hidden; }
     
-    .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 2px; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
-    .btn-action:hover { color: var(--text); }
-    .btn-action.btn-del:hover { color: var(--danger); }
-    
-    .drag-handle { color: var(--muted); cursor: grab; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; }
+    .drag-handle { color: var(--muted); cursor: grab; font-size: 1rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; }
     .row-grid.dragging { opacity: 0.35; background: rgba(255, 255, 255, 0.05); }
     .row-grid.drag-over-top { border-top: 2px solid var(--accent); }
     .row-grid.drag-over-bottom { border-bottom: 2px solid var(--accent); }
 
-    .btn-add-wrap { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; }
-    .btn-add { font-size: 0.74rem; color: var(--accent); font-weight: 600; background: none; border: none; cursor: pointer; padding: 4px; }
-    .btn-add:hover { text-decoration: underline; }
+    .btn-add { font-size: 0.75rem; color: var(--accent); font-weight: 600; background: none; border: none; cursor: pointer; padding: 7px 10px; width: 100%; text-align: left; }
+    .btn-add:hover { background: rgba(16,185,129,0.05); }
 
     .hidden { display: none !important; }
   </style>
@@ -296,7 +320,7 @@
 
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v5';
+          const CACHE_NAME = 'loneapp-cache-v6';
           self.addEventListener('install', e => {
             e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll([self.location.href])));
             self.skipWaiting();
@@ -763,7 +787,6 @@
             <div style="text-align:right">Á-pris</div>
             <div style="text-align:center">Sk</div>
             <div style="text-align:right">Summa</div>
-            <div></div>
           </div>
           <div id="section-rows-${sIdx}">
         `;
@@ -794,35 +817,38 @@
           }
 
           html += `
-            <div class="row-grid" 
-                 id="row-${sIdx}-${iIdx}" 
-                 draggable="true"
-                 ondragstart="handleDragStart(event, ${sIdx}, ${iIdx})"
-                 ondragover="handleDragOver(event)"
-                 ondragleave="handleDragLeave(event)"
-                 ondrop="handleDrop(event, ${sIdx}, ${iIdx})"
-                 ondragend="handleDragEnd(event)">
-              <div class="drag-handle" 
-                   title="Dra för att flytta"
-                   ontouchstart="handleTouchStart(event, ${sIdx}, ${iIdx})"
-                   ontouchmove="handleTouchMove(event)"
-                   ontouchend="handleTouchEnd(event)">⠿</div>
-              <div><input type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
-              <div><input type="number" step="any" value="${item.qty}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
-              <div><input type="number" step="any" value="${item.rate}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
-              <div style="display:flex; justify-content:center;">${taxBtn}</div>
-              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${formatKr(sum)}</div>
-              <button class="btn-action btn-del" title="Ta bort rad" onclick="deleteItem(${sIdx}, ${iIdx})">&times;</button>
+            <div class="swipe-wrapper" id="swipe-wrap-${sIdx}-${iIdx}">
+              <div class="swipe-bg-right">⎘ Kopiera</div>
+              <div class="swipe-bg-left">Ta bort ✕</div>
+              <div class="row-grid" 
+                   id="row-${sIdx}-${iIdx}" 
+                   draggable="true"
+                   ondragstart="handleDragStart(event, ${sIdx}, ${iIdx})"
+                   ondragover="handleDragOver(event)"
+                   ondragleave="handleDragLeave(event)"
+                   ondrop="handleDrop(event, ${sIdx}, ${iIdx})"
+                   ondragend="handleDragEnd(event)"
+                   ontouchstart="initSwipe(event, ${sIdx}, ${iIdx})"
+                   ontouchmove="moveSwipe(event, ${sIdx}, ${iIdx})"
+                   ontouchend="endSwipe(event, ${sIdx}, ${iIdx})">
+                <div class="drag-handle" 
+                     title="Dra för att flytta"
+                     ontouchstart="handleTouchStart(event, ${sIdx}, ${iIdx})"
+                     ontouchmove="handleTouchMove(event)"
+                     ontouchend="handleTouchEnd(event)">⠿</div>
+                <div><input type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
+                <div><input type="number" step="any" value="${item.qty}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
+                <div><input type="number" step="any" value="${item.rate}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
+                <div style="display:flex; justify-content:center;">${taxBtn}</div>
+                <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${formatKr(sum)}</div>
+              </div>
             </div>
           `;
         });
 
         html += `
             </div>
-          <div class="btn-add-wrap">
-            <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
-            <button class="btn-small" style="background:rgba(255,255,255,0.06); font-size:0.68rem;" onclick="duplicateLastItem(${sIdx})" title="Kopiera sista raden i denna sektion">⎘ Duplicera sista</button>
-          </div>
+          <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
         `;
         card.innerHTML = html;
         container.appendChild(card);
@@ -917,16 +943,91 @@
       updateCalculationsOnly();
     }
 
-    function duplicateLastItem(sIdx) {
+    function duplicateItem(sIdx, iIdx) {
       const users = getUsers();
-      const items = users[currentUser].months[currentMonthKey].sections[sIdx].items;
-      if (!items.length) return;
-      const last = items[items.length - 1];
-      items.push(JSON.parse(JSON.stringify(last)));
+      const itemToCopy = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
+      const cloned = JSON.parse(JSON.stringify(itemToCopy));
+      users[currentUser].months[currentMonthKey].sections[sIdx].items.splice(iIdx + 1, 0, cloned);
       saveUsers(users);
       render();
     }
 
+    function deleteItem(sIdx, iIdx) {
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections[sIdx].items.splice(iIdx, 1);
+      saveUsers(users);
+      render();
+    }
+
+    // --- SVEP-LOGIK (Vänster = Radera, Höger = Duplicera) ---
+    let swipeState = null;
+
+    function initSwipe(e, sIdx, iIdx) {
+      if (e.target.closest('.drag-handle') || e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+      const touch = e.touches[0];
+      swipeState = {
+        sIdx,
+        iIdx,
+        startX: touch.clientX,
+        startY: touch.clientY,
+        el: document.getElementById(`row-${sIdx}-${iIdx}`),
+        direction: null
+      };
+      if (swipeState.el) swipeState.el.style.transition = 'none';
+    }
+
+    function moveSwipe(e, sIdx, iIdx) {
+      if (!swipeState || swipeState.sIdx !== sIdx || swipeState.iIdx !== iIdx) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - swipeState.startX;
+      const deltaY = touch.clientY - swipeState.startY;
+
+      // Om vertikal skrollning dominerar, avbryt svep
+      if (!swipeState.direction) {
+        if (Math.abs(deltaY) > 8) {
+          swipeState = null;
+          return;
+        }
+        if (Math.abs(deltaX) > 8) {
+          swipeState.direction = 'horizontal';
+        }
+      }
+
+      if (swipeState.direction === 'horizontal') {
+        e.preventDefault();
+        swipeState.el.style.transform = `translateX(${deltaX}px)`;
+      }
+    }
+
+    function endSwipe(e, sIdx, iIdx) {
+      if (!swipeState || swipeState.sIdx !== sIdx || swipeState.iIdx !== iIdx) return;
+      const el = swipeState.el;
+      el.style.transition = 'transform 0.2s ease-out';
+      
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - swipeState.startX;
+      const threshold = 95; // Gräns för att trigga åtgärd
+
+      if (deltaX < -threshold) {
+        // Vänstersvep -> Radera
+        el.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+          deleteItem(sIdx, iIdx);
+        }, 180);
+      } else if (deltaX > threshold) {
+        // Högersvep -> Duplicera
+        el.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          duplicateItem(sIdx, iIdx);
+        }, 180);
+      } else {
+        // Återställ raden om draget var för kort
+        el.style.transform = 'translateX(0px)';
+      }
+      swipeState = null;
+    }
+
+    // --- DRAG AND DROP (Flytta rader upp/ned) ---
     function handleDragStart(e, sIdx, iIdx) {
       draggedData = { sIdx, iIdx };
       e.dataTransfer.effectAllowed = 'move';
@@ -981,6 +1082,7 @@
     }
 
     function handleTouchStart(e, sIdx, iIdx) {
+      e.stopPropagation();
       touchData = { sIdx, iIdx };
       const row = document.getElementById(`row-${sIdx}-${iIdx}`);
       if (row) row.classList.add('dragging');
@@ -1034,13 +1136,6 @@
         rate: 0, 
         taxType: "table" 
       });
-      saveUsers(users);
-      render();
-    }
-
-    function deleteItem(sIdx, iIdx) {
-      const users = getUsers();
-      users[currentUser].months[currentMonthKey].sections[sIdx].items.splice(iIdx, 1);
       saveUsers(users);
       render();
     }
