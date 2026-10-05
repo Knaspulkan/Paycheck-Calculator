@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Lönekalkylator</title>
+  
+  <!-- PWA & Mobil-meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lönekalkylator">
+  <meta name="theme-color" content="#0b1120">
+  <link id="manifest-placeholder" rel="manifest">
+
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #182234;
+      --border: #2c3a50;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --tax-color: #ef4444;
+      --aga-color: #3b82f6;
+      --pension-color: #a855f7;
+      --danger: #ef4444;
+      --input-bg: #0d1527;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 12px; padding-bottom: 70px; }
+    
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .auth-wrap { max-width: 350px; margin: 50px auto; background: var(--card); padding: 22px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .auth-wrap h2 { font-size: 1.25rem; margin-bottom: 14px; text-align: center; }
+    .auth-field { margin-bottom: 10px; }
+    .auth-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+    .auth-btn { width: 100%; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 7px; font-weight: 600; cursor: pointer; margin-top: 6px; }
+    .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
+    
+    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .user-info { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
+    .btn-small { background: #243046; color: var(--text); border: none; padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
+    .btn-small:hover { background: #334155; }
+    .btn-admin { background: #6366f1; }
+    
+    .backup-bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 8px; padding: 8px 10px; }
+    .backup-row { display: flex; justify-content: space-between; align-items: center; }
+    .backup-bar span { font-size: 0.72rem; color: var(--muted); }
+    .backup-actions { display: flex; gap: 6px; }
+
+    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .month-controls { display: flex; gap: 8px; align-items: center; flex: 1; }
+    .btn-month { background: var(--accent); color: white; border: none; padding: 7px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px; }
+    .donut-wrapper { position: relative; width: 145px; height: 145px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
+    .donut-inner-text small { display: block; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .donut-inner-text strong { display: block; font-size: 1.05rem; color: var(--accent); font-weight: 800; line-height: 1.15; margin-top: 2px; }
+
+    .stacked-metrics { display: flex; flex-direction: column; gap: 6px; min-width: 220px; flex: 1; max-width: 420px; }
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.18); border-radius: 6px; border-left: 3px solid transparent; }
+    .metric-row.aga { border-color: var(--aga-color); }
+    .metric-row.brutto { border-color: var(--muted); }
+    .metric-row.pension { border-color: var(--pension-color); }
+    .metric-row.skatt { border-color: var(--tax-color); }
+    .metric-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .metric-val { font-size: 0.88rem; font-weight: 700; }
+
+    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; }
+    .settings-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .settings-panel label { color: var(--muted); margin-right: 4px; }
+    
+    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+    .section-header { padding: 8px 12px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.85rem; font-weight: 600; }
+    
+    /* Desktop layout */
+    .row { 
+      display: grid; 
+      grid-template-columns: 20px 24px 105px minmax(110px, 1fr) 48px 75px 82px 85px 24px; 
+      gap: 5px; 
+      padding: 6px 8px; 
+      align-items: center; 
+      border-bottom: 1px solid rgba(255,255,255,0.035); 
+      background: var(--card); 
+      transition: background 0.15s; 
+    }
+    .row-header { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; padding: 6px 8px; font-weight: 600; }
+    
+    .drag-handle { color: var(--muted); cursor: grab; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; padding: 2px; }
+    .drag-handle:active { cursor: grabbing; }
+    .row.dragging { opacity: 0.35; background: rgba(255, 255, 255, 0.05); }
+    .row.drag-over-top { border-top: 2px solid var(--accent); }
+    .row.drag-over-bottom { border-bottom: 2px solid var(--accent); }
+
+    input, select { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); border-radius: 5px; padding: 5px 6px; font-size: 0.8rem; width: 100%; outline: none; }
+    input:focus, select:focus { border-color: var(--accent); }
+    input[type="number"] { text-align: right; }
+    input[type="date"] { font-size: 0.72rem; padding: 4px 4px; color-scheme: dark; }
+    .col-sum { text-align: right; font-weight: 600; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .btn-action:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+    .btn-action.btn-del:hover { color: var(--danger); }
+    
+    .btn-add { font-size: 0.75rem; color: var(--accent); padding: 8px 12px; font-weight: 600; width: 100%; text-align: left; background: none; border: none; cursor: pointer; }
+    .hidden { display: none !important; }
+
+    /* Mobiloptimering: Staplar detaljerna kompakt per rad på skärmar under 680px */
+    @media (max-width: 680px) {
+      .row-header { display: none; }
+      .row {
+        display: grid;
+        grid-template-columns: 24px 26px 1fr 1fr 28px;
+        grid-template-areas: 
+          "drag copy desc desc del"
+          ". date qty rate sum"
+          ". tax tax sum .";
+        gap: 6px;
+        padding: 8px 6px;
+      }
+      .cell-drag { grid-area: drag; }
+      .cell-copy { grid-area: copy; }
+      .cell-date { grid-area: date; }
+      .cell-desc { grid-area: desc; }
+      .cell-qty  { grid-area: qty; }
+      .cell-rate { grid-area: rate; }
+      .cell-tax  { grid-area: tax; }
+      .cell-sum  { grid-area: sum; text-align: right; align-self: center; font-size: 0.88rem; }
+      .cell-del  { grid-area: del; justify-self: end; }
+      
+      .dashboard-center { padding: 12px; gap: 16px; }
+      .donut-wrapper { width: 130px; height: 130px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="authView" class="auth-wrap">
+    <h2 id="authTitle">Logga in</h2>
+    <div class="auth-field">
+      <label>Användarnamn</label>
+      <input type="text" id="usernameInput" placeholder="Användarnamn" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
+    </div>
+    <div class="auth-field">
+      <label>Lösenord</label>
+      <input type="password" id="passwordInput" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
+    </div>
+    <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
+    <div class="auth-switch" id="authToggleText" onclick="toggleAuthMode()">Inget konto? Skapa användare här</div>
+  </div>
+
+  <div id="appView" class="hidden">
+    <div class="app-header">
+      <h1 style="font-size: 1.15rem;">Lönekalkylator</h1>
+      <div class="user-info">
+        <span id="currentUserLabel"></span>
+        <button class="btn-small" onclick="logout()">Logga ut</button>
+      </div>
+    </div>
+
+    <div class="backup-bar">
+      <div class="backup-row">
+        <span>Min säkerhetskopia</span>
+        <div class="backup-actions">
+          <button class="btn-small" onclick="exportUserData()">Spara</button>
+          <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importUserData(event)">
+        </div>
+      </div>
+      <div class="backup-row" id="adminBackupRow" style="display:none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+        <span style="color: #818cf8; font-weight: 600;">Admin: Hela databasen</span>
+        <div class="backup-actions">
+          <button class="btn-small btn-admin" onclick="exportAllUsers()">Exportera alla</button>
+          <button class="btn-small btn-admin" onclick="document.getElementById('adminImportFileInput').click()">Importera alla</button>
+          <input type="file" id="adminImportFileInput" accept=".json" style="display:none" onchange="importAllUsers(event)">
+        </div>
+      </div>
+    </div>
+
+    <div class="month-bar">
+      <div class="month-controls">
+        <label for="monthSelect" style="font-size: 0.78rem; color: var(--muted);">Månad:</label>
+        <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 130px;"></select>
+      </div>
+      <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
+    </div>
+
+    <div class="settings-panel">
+      <div class="settings-row">
+        <div style="flex: 1; min-width: 200px; display:flex; gap: 6px; align-items:center;">
+          <label>Kollektivavtal:</label>
+          <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
+            <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
+            <option value="livs">Livsmedelsavtalet (Livs)</option>
+            <option value="teknik_metall">Teknikavtalet (IF Metall)</option>
+            <option value="handels">Handels (Butik & Lager)</option>
+            <option value="el">Installationsavtalet (Elektrikerna)</option>
+            <option value="custom">Anpassad / Egen</option>
+          </select>
+          <button class="btn-small" onclick="forceResetToAgreement()" title="Läs in mallens rader på nytt">Återställ mall</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <label>Skattetabell:</label>
+          <select id="taxTable" onchange="updateTaxSetting('taxTable', this.value)" style="width: auto;">
+            <option value="33" selected>Tabell 33</option>
+            <option value="31">Tabell 31</option>
+            <option value="32">Tabell 32</option>
+            <option value="34">Tabell 34</option>
+          </select>
+        </div>
+        <div>
+          <label>Engångsskatt (%):</label>
+          <input type="number" id="oneTimeTaxRate" value="54" style="width: 55px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-center">
+      <div class="donut-wrapper">
+        <svg id="donutChart" width="145" height="145" viewBox="0 0 42 42"></svg>
+        <div class="donut-inner-text">
+          <small>Nettolön</small>
+          <strong id="center-netto">0 kr</strong>
+        </div>
+      </div>
+
+      <div class="stacked-metrics">
+        <div class="metric-row aga">
+          <span class="metric-label" style="color:var(--aga-color)">Total lönekostnad</span>
+          <span class="metric-val" style="color:var(--aga-color)" id="metric-totalkostnad">0 kr</span>
+        </div>
+        <div class="metric-row brutto">
+          <span class="metric-label">Bruttolön</span>
+          <span class="metric-val" id="metric-brutto">0 kr</span>
+        </div>
+        <div class="metric-row pension">
+          <span class="metric-label" style="color:var(--pension-color)">Pensionsavsättning</span>
+          <span class="metric-val" style="color:var(--pension-color)" id="metric-pension">0 kr</span>
+        </div>
+        <div class="metric-row skatt">
+          <span class="metric-label" style="color:var(--tax-color)">Preliminärskatt</span>
+          <span class="metric-val" style="color:var(--tax-color)" id="metric-skatt">0 kr</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="sections"></div>
+  </div>
+
+  <script>
+    // --- PWA: Inline Service Worker & Dynamiskt Manifest ---
+    (function setupPWA() {
+      const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><rect width="512" height="512" rx="100" fill="#0b1120"/><circle cx="256" cy="256" r="160" fill="none" stroke="#10b981" stroke-width="36"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="#f8fafc" font-size="140" font-family="-apple-system, sans-serif" font-weight="bold">kr</text></svg>`;
+      const iconUrl = 'data:image/svg+xml;base64,' + btoa(iconSvg);
+
+      const manifest = {
+        name: "Lönekalkylator",
+        short_name: "Lön",
+        start_url: window.location.href,
+        display: "standalone",
+        background_color: "#0b1120",
+        theme_color: "#0b1120",
+        icons: [{ src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      const manifestUrl = URL.createObjectURL(manifestBlob);
+      const manifestEl = document.getElementById("manifest-placeholder");
+      if (manifestEl) manifestEl.setAttribute("href", manifestUrl);
+
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        const swCode = `
+          const CACHE_NAME = 'loneapp-cache-v1';
+          self.addEventListener('install', e => {
+            e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll([self.location.href])));
+            self.skipWaiting();
+          });
+          self.addEventListener('activate', e => {
+            e.waitUntil(clients.claim());
+          });
+          self.addEventListener('fetch', e => {
+            e.respondWith(caches.match(e.request).then(res => res || fetch(e.request).catch(() => caches.match(self.location.href))));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+    })();
+
+    // --- Skatteberäkning Tabell 33 ---
+    function getSkatteverketTabell33(monthlyIncome) {
+      if (monthlyIncome <= 0) return 0;
+      const annual = monthlyIncome * 12;
+      const pbb = 57300;
+
+      let ga = 0;
+      if (annual < 0.99 * pbb) ga = 0.423 * pbb;
+      else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
+      else if (annual < 3.11 * pbb) ga = 0.77 * pbb;
+      else if (annual < 7.88 * pbb) ga = 0.77 * pbb - 0.1 * (annual - 3.11 * pbb);
+      else ga = 0.293 * pbb;
+
+      let jsa = 0;
+      if (annual < 0.91 * pbb) jsa = (annual - ga) * 0.33;
+      else if (annual < 3.24 * pbb) jsa = (0.91 * pbb + 0.34 * (annual - 0.91 * pbb) - ga) * 0.33;
+      else if (annual < 8.08 * pbb) jsa = (1.702 * pbb + 0.128 * (annual - 3.24 * pbb) - ga) * 0.33;
+      else if (annual < 13.54 * pbb) jsa = (2.322 * pbb - ga) * 0.33;
+      else jsa = Math.max(0, (2.322 * pbb - ga) * 0.33 - 0.03 * (annual - 13.54 * pbb));
+      jsa = Math.max(0, jsa);
+
+      const taxableAnnual = Math.max(0, annual - ga);
+      let taxAnnual = (taxableAnnual * 0.33) - jsa;
+
+      const skiktgrans = 598500;
+      if (taxableAnnual > skiktgrans) {
+        taxAnnual += (taxableAnnual - skiktgrans) * 0.20;
+      }
+
+      return Math.round(Math.max(0, taxAnnual / 12));
+    }
+
+    const agreementTemplates = {
+      teknik_unionen: {
+        name: "Teknikavtalet (Unionen / Tjänstemän)",
+        sections: [
+          {
+            id: "taxable",
+            title: "Skattepliktig inkomst & tillägg",
+            type: "income",
+            items: [
+              { date: "2026-10-01", name: "Månadslön", qty: 1, rate: 46332, isBase: true, taxType: "table" },
+              { date: "2026-10-01", name: "Beredskapsersättning Fast", qty: 1, rate: 6097, taxType: "table" },
+              { date: "2026-10-15", name: "Omvandling av innestående komp 2,0", qty: 15.5, rate: 728.18, taxType: "onetime" },
+              { date: "2026-10-25", name: "Restid", qty: 2, rate: 218.45, formulaDiv: 240, taxType: "table" },
+              { date: "2026-10-27", name: "Restid helg", qty: 2, rate: 275.94, formulaDiv: 190, taxType: "table" },
+              { date: "2026-10-24", name: "Förskjuten tid 2/400", qty: 16, rate: 131.07, formulaDiv: 400, taxType: "table" },
+              { date: "2026-10-03", name: "Förskjuten tid 3/300", qty: 5, rate: 174.76, formulaDiv: 300, taxType: "table" },
+              { date: "2026-10-24", name: "Rörl beredskapsers/vecka", qty: 1, rate: 5205, taxType: "table" },
+              { date: "2026-10-01", name: "Matkup förmån", qty: 1, rate: 62, taxType: "benefit" }
+            ]
+          },
+          {
+            id: "preTaxDed",
+            title: "Avdrag före skatt",
+            type: "deduction",
+            items: [
+              { date: "", name: "Tjänstledighet timavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
+              { date: "", name: "Sjukavdrag timme [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
+              { date: "", name: "VAB timavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 }
+            ]
+          },
+          {
+            id: "postTax",
+            title: "Nettojusteringar & förmåner",
+            type: "net",
+            items: [
+              { date: "2026-10-01", name: "Matkup avdrag", qty: 1, rate: -62 },
+              { date: "", name: "Personalköp", qty: 1, rate: -75 },
+              { date: "", name: "Personalköp", qty: 1, rate: -131 }
+            ]
+          },
+          {
+            id: "external",
+            title: "Externa tillägg",
+            type: "external",
+            items: [
+              { date: "", name: "Barnbidrag", qty: 0, rate: 1325 }
+            ]
+          }
+        ]
+      }
+    };
+
+    let isRegisterMode = false;
+    let currentUser = null;
+    let currentMonthKey = null;
+    let draggedData = null;
+    let touchData = null;
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem("salary_app_users") || "{}"); } catch (e) { return {}; }
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem("salary_app_users", JSON.stringify(users));
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById("authTitle").textContent = isRegisterMode ? "Skapa användare" : "Logga in";
+      document.getElementById("authSubmitBtn").textContent = isRegisterMode ? "Registrera" : "Logga in";
+      document.getElementById("authToggleText").textContent = isRegisterMode ? "Har du redan ett konto? Logga in här" : "Inget konto? Skapa användare här";
+    }
+
+    function handleAuthSubmit() {
+      const uRaw = document.getElementById("usernameInput").value.trim();
+      const u = uRaw.toLowerCase();
+      const p = document.getElementById("passwordInput").value;
+      if (!u || !p) return alert("Fyll i användarnamn och lösenord.");
+
+      const users = getUsers();
+      const initialMonth = "2026-10";
+
+      if (isRegisterMode) {
+        if (users[u]) return alert("Användaren finns redan.");
+        users[u] = {
+          password: btoa(p),
+          currentMonth: initialMonth,
+          agreement: "teknik_unionen",
+          months: {
+            [initialMonth]: {
+              taxTable: 33,
+              oneTimeTaxRate: 54,
+              agreement: "teknik_unionen",
+              sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+            }
+          }
+        };
+        saveUsers(users);
+        loginUser(u);
+      } else {
+        let matchedKey = Object.keys(users).find(k => k.toLowerCase() === u);
+        if (!matchedKey) {
+          users[u] = {
+            password: btoa(p),
+            currentMonth: initialMonth,
+            agreement: "teknik_unionen",
+            months: {
+              [initialMonth]: {
+                taxTable: 33,
+                oneTimeTaxRate: 54,
+                agreement: "teknik_unionen",
+                sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+              }
+            }
+          };
+          saveUsers(users);
+          matchedKey = u;
+        }
+        loginUser(matchedKey);
+      }
+    }
+
+    function loginUser(username) {
+      currentUser = username;
+      localStorage.setItem("salary_app_active_user", username);
+      document.getElementById("authView").classList.add("hidden");
+      document.getElementById("appView").classList.remove("hidden");
+      document.getElementById("currentUserLabel").textContent = username;
+      document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
+
+      const users = getUsers();
+      if (!users[username]) {
+        users[username] = {
+          currentMonth: "2026-10",
+          months: {
+            "2026-10": {
+              taxTable: 33,
+              oneTimeTaxRate: 54,
+              agreement: "teknik_unionen",
+              sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+            }
+          }
+        };
+        saveUsers(users);
+      }
+
+      const userObj = users[username];
+      const monthKeys = Object.keys(userObj.months || {}).sort();
+      currentMonthKey = userObj.currentMonth || (monthKeys.length ? monthKeys[monthKeys.length - 1] : "2026-10");
+      
+      populateMonthDropdown();
+      loadCurrentMonth();
+    }
+
+    function logout() {
+      localStorage.removeItem("salary_app_active_user");
+      currentUser = null;
+      document.getElementById("appView").classList.add("hidden");
+      document.getElementById("authView").classList.remove("hidden");
+      document.getElementById("usernameInput").value = "";
+      document.getElementById("passwordInput").value = "";
+    }
+
+    function applyAgreementTemplate(agrKey) {
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].agreement = agrKey;
+      saveUsers(users);
+    }
+
+    function forceResetToAgreement() {
+      const agrKey = document.getElementById("agreementSelect").value;
+      if (!agreementTemplates[agrKey]) return;
+      if (!confirm("Detta återställer månadens rader till mallens standard. Fortsätt?")) return;
+
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections = JSON.parse(JSON.stringify(agreementTemplates[agrKey].sections));
+      users[currentUser].months[currentMonthKey].oneTimeTaxRate = 54;
+      users[currentUser].months[currentMonthKey].taxTable = 33;
+      saveUsers(users);
+      render();
+    }
+
+    function extractDivisor(item) {
+      if (item.formulaDiv) return item.formulaDiv;
+      const match = item.name.match(/\[1\/(\d+)\]/);
+      if (match && match[1]) {
+        item.formulaDiv = parseInt(match[1], 10);
+        return item.formulaDiv;
+      }
+      return null;
+    }
+
+    function recalcAllDivisors(baseSalary) {
+      const users = getUsers();
+      const sections = users[currentUser].months[currentMonthKey].sections;
+
+      sections.forEach((sec, sI) => {
+        sec.items.forEach((item, iI) => {
+          const div = extractDivisor(item);
+          if (div && baseSalary > 0) {
+            item.rate = Math.round((baseSalary / div) * 100) / 100;
+            const inputEl = document.getElementById(`input-rate-${sI}-${iI}`);
+            if (inputEl) inputEl.value = item.rate;
+          }
+        });
+      });
+      saveUsers(users);
+    }
+
+    function exportUserData() {
+      const users = getUsers();
+      const userData = users[currentUser];
+      if (!userData) return;
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData, null, 2));
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `lonebackup-${currentUser}-${dateStr}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importUserData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed.months) throw new Error("Ogiltig fil");
+          if (!confirm("Ersätt dina sparade månader med backup-filen?")) return;
+
+          const users = getUsers();
+          users[currentUser].months = parsed.months;
+          users[currentUser].currentMonth = parsed.currentMonth || Object.keys(parsed.months)[0];
+          saveUsers(users);
+
+          currentMonthKey = users[currentUser].currentMonth;
+          populateMonthDropdown();
+          loadCurrentMonth();
+          alert("Din data är återställd!");
+        } catch (err) {
+          alert("Kunde inte läsa in backup-filen.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function exportAllUsers() {
+      const users = getUsers();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2));
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `loneapp-ALLA-ANVANDARE-${dateStr}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importAllUsers(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (typeof parsed !== "object") throw new Error("Ogiltig databasfil");
+          if (!confirm("VARNING: Detta skriver över hela databasen för samtliga användare. Fortsätt?")) return;
+
+          saveUsers(parsed);
+          populateMonthDropdown();
+          loadCurrentMonth();
+          alert("Hela användardatabasen återställd!");
+        } catch (err) {
+          alert("Kunde inte återställa databasen.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function populateMonthDropdown() {
+      const users = getUsers();
+      const months = Object.keys(users[currentUser]?.months || {}).sort();
+      const select = document.getElementById("monthSelect");
+      select.innerHTML = "";
+      months.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        if (m === currentMonthKey) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function changeMonth(mKey) {
+      currentMonthKey = mKey;
+      const users = getUsers();
+      users[currentUser].currentMonth = mKey;
+      saveUsers(users);
+      loadCurrentMonth();
+    }
+
+    function createNewMonth() {
+      const name = prompt("Ange namn på ny månad (t.ex. 2026-11):");
+      if (!name) return;
+      const users = getUsers();
+      if (users[currentUser].months[name]) return alert("Denna månad finns redan!");
+
+      const prevData = users[currentUser].months[currentMonthKey];
+      const clonedSections = JSON.parse(JSON.stringify(prevData.sections));
+      
+      // Nollställ datum till den nya månaden
+      clonedSections.forEach(sec => {
+        sec.items.forEach(item => {
+          if (item.date) item.date = `${name}-01`;
+        });
+      });
+
+      users[currentUser].months[name] = {
+        taxTable: prevData.taxTable || 33,
+        oneTimeTaxRate: prevData.oneTimeTaxRate || 54,
+        agreement: prevData.agreement || "teknik_unionen",
+        sections: clonedSections
+      };
+      users[currentUser].currentMonth = name;
+      currentMonthKey = name;
+      saveUsers(users);
+
+      populateMonthDropdown();
+      loadCurrentMonth();
+    }
+
+    function updateTaxSetting(key, val) {
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey][key] = parseFloat(val) || 0;
+      saveUsers(users);
+      updateCalculationsOnly();
+    }
+
+    function loadCurrentMonth() {
+      const users = getUsers();
+      if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+      const mData = users[currentUser].months[currentMonthKey];
+      document.getElementById("taxTable").value = mData.taxTable || 33;
+      document.getElementById("oneTimeTaxRate").value = mData.oneTimeTaxRate !== undefined ? mData.oneTimeTaxRate : 54;
+      document.getElementById("agreementSelect").value = mData.agreement || "teknik_unionen";
+      render();
+    }
+
+    function renderDonutChart(netto, skatt, aga, pension) {
+      const svg = document.getElementById("donutChart");
+      const total = netto + skatt + aga + pension;
+      
+      if (total <= 0) {
+        svg.innerHTML = '<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>';
+        return;
+      }
+
+      const nettoPct = (netto / total) * 100;
+      const skattPct = (skatt / total) * 100;
+      const agaPct = (aga / total) * 100;
+      const pensionPct = (pension / total) * 100;
+
+      const off1 = 25;
+      const off2 = 25 - nettoPct;
+      const off3 = 25 - nettoPct - skattPct;
+      const off4 = 25 - nettoPct - skattPct - agaPct;
+
+      svg.innerHTML = `
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--accent)" stroke-width="4.5"
+          stroke-dasharray="${nettoPct} ${100 - nettoPct}" stroke-dashoffset="${off1}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--tax-color)" stroke-width="4.5"
+          stroke-dasharray="${skattPct} ${100 - skattPct}" stroke-dashoffset="${off2}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--aga-color)" stroke-width="4.5"
+          stroke-dasharray="${agaPct} ${100 - agaPct}" stroke-dashoffset="${off3}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--pension-color)" stroke-width="4.5"
+          stroke-dasharray="${pensionPct} ${100 - pensionPct}" stroke-dashoffset="${off4}"></circle>
+      `;
+    }
+
+    function render() {
+      const users = getUsers();
+      if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+      const mData = users[currentUser].months[currentMonthKey];
+      const sections = mData.sections || [];
+      const container = document.getElementById("sections");
+      container.innerHTML = "";
+
+      const ym = currentMonthKey && currentMonthKey.match(/^\d{4}-\d{2}$/) ? currentMonthKey : "2026-10";
+      const [year, month] = ym.split("-").map(Number);
+      const lastDay = new Date(year, month, 0).getDate();
+      const minDate = `${ym}-01`;
+      const maxDate = `${ym}-${String(lastDay).padStart(2, '0')}`;
+
+      sections.forEach((sec, sIdx) => {
+        const card = document.createElement("div");
+        card.className = "section-card";
+
+        let html = `
+          <div class="section-header">${sec.title}</div>
+          <div class="row row-header">
+            <div></div>
+            <div></div>
+            <div>Datum</div>
+            <div>Beskrivning</div>
+            <div style="text-align:right">Antal</div>
+            <div style="text-align:right">Á-pris</div>
+            <div style="text-align:center">Skatteform</div>
+            <div style="text-align:right">Summa</div>
+            <div></div>
+          </div>
+          <div class="rows-container" id="section-rows-${sIdx}">
+        `;
+
+        sec.items.forEach((item, iIdx) => {
+          const sum = Math.round(((item.qty || 0) * (item.rate || 0)) * 100) / 100;
+          const taxType = item.taxType || (sec.type === "income" ? "table" : "none");
+
+          let taxTypeSelect = `<div class="cell-tax"></div>`;
+          if (sec.type === "income") {
+            taxTypeSelect = `
+              <div class="cell-tax">
+                <select onchange="updateItemTaxType(${sIdx}, ${iIdx}, this.value)" style="font-size:0.75rem; padding: 4px;">
+                  <option value="table" ${taxType === 'table' ? 'selected' : ''}>Tabell</option>
+                  <option value="onetime" ${taxType === 'onetime' ? 'selected' : ''}>Engångs (54%)</option>
+                  <option value="benefit" ${taxType === 'benefit' ? 'selected' : ''}>Förmån</option>
+                </select>
+              </div>
+            `;
+          }
+
+          html += `
+            <div class="row" 
+                 id="row-${sIdx}-${iIdx}" 
+                 draggable="true"
+                 ondragstart="handleDragStart(event, ${sIdx}, ${iIdx})"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)"
+                 ondrop="handleDrop(event, ${sIdx}, ${iIdx})"
+                 ondragend="handleDragEnd(event)">
+              <div class="cell-drag drag-handle" 
+                   title="Dra för att flytta"
+                   ontouchstart="handleTouchStart(event, ${sIdx}, ${iIdx})"
+                   ontouchmove="handleTouchMove(event)"
+                   ontouchend="handleTouchEnd(event)">⠿</div>
+              <button class="cell-copy btn-action" title="Kopiera rad" onclick="duplicateItem(${sIdx}, ${iIdx})">⎘</button>
+              <div class="cell-date"><input type="date" value="${item.date || ''}" min="${minDate}" max="${maxDate}" oninput="updateItem(${sIdx}, ${iIdx}, 'date', this.value, false)"></div>
+              <div class="cell-desc"><input type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
+              <div class="cell-qty"><input type="number" step="any" value="${item.qty}" placeholder="Antal" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
+              <div class="cell-rate"><input type="number" step="any" value="${item.rate}" placeholder="Á-pris" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
+              ${taxTypeSelect}
+              <div class="cell-sum col-sum" id="col-sum-${sIdx}-${iIdx}">${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr</div>
+              <button class="cell-del btn-action btn-del" title="Ta bort rad" onclick="deleteItem(${sIdx}, ${iIdx})">&times;</button>
+            </div>
+          `;
+        });
+
+        html += `</div><button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>`;
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+
+      updateCalculationsOnly();
+    }
+
+    function updateCalculationsOnly() {
+      const users = getUsers();
+      if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+      const mData = users[currentUser].months[currentMonthKey];
+      const sections = mData.sections || [];
+      const oneTimeRate = (mData.oneTimeTaxRate !== undefined ? mData.oneTimeTaxRate : 54) / 100;
+
+      let tableTaxBase = 0;
+      let oneTimeTaxBase = 0;
+      let benefitBase = 0;
+      let preDeductions = 0;
+      let netAdjustments = 0;
+      let grossSalaryForPayout = 0;
+
+      sections.forEach((sec, sIdx) => {
+        sec.items.forEach((item, iIdx) => {
+          const sum = Math.round(((item.qty || 0) * (item.rate || 0)) * 100) / 100;
+
+          if (sec.type === "income") {
+            const tType = item.taxType || "table";
+            if (tType === "table") {
+              tableTaxBase += sum;
+              grossSalaryForPayout += sum;
+            } else if (tType === "onetime") {
+              oneTimeTaxBase += sum;
+              grossSalaryForPayout += sum;
+            } else if (tType === "benefit") {
+              benefitBase += sum;
+            }
+          } else if (sec.type === "deduction") {
+            preDeductions += sum;
+          } else if (sec.type === "net") {
+            netAdjustments += sum;
+          }
+
+          const sumEl = document.getElementById(`col-sum-${sIdx}-${iIdx}`);
+          if (sumEl) sumEl.textContent = `${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr`;
+        });
+      });
+
+      const finalTableBase = Math.max(0, tableTaxBase + benefitBase - preDeductions);
+      const tableTax = getSkatteverketTabell33(finalTableBase);
+      const oneTimeTax = Math.round(oneTimeTaxBase * oneTimeRate);
+      const totalTax = tableTax + oneTimeTax;
+
+      const totalGrossDisplay = grossSalaryForPayout - preDeductions;
+      const netSalary = totalGrossDisplay - totalTax + netAdjustments;
+      const aga = Math.round(totalGrossDisplay * 0.3142);
+      const totalEmployerCost = totalGrossDisplay + aga;
+
+      const allmanPension = Math.round(Math.min(totalGrossDisplay, 49375) * 0.185);
+      let itp1 = 0;
+      if (totalGrossDisplay <= 49375) {
+        itp1 = totalGrossDisplay * 0.045;
+      } else {
+        itp1 = (49375 * 0.045) + ((totalGrossDisplay - 49375) * 0.30);
+      }
+      const totalPension = Math.round(allmanPension + itp1);
+
+      document.getElementById("center-netto").textContent = `${netSalary.toLocaleString('sv-SE', {minimumFractionDigits: 0, maximumFractionDigits: 0})} kr`;
+      document.getElementById("metric-totalkostnad").textContent = `${totalEmployerCost.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr`;
+      document.getElementById("metric-brutto").textContent = `${totalGrossDisplay.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr`;
+      document.getElementById("metric-pension").textContent = `${totalPension.toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-skatt").textContent = `-${totalTax.toLocaleString('sv-SE')} kr`;
+
+      renderDonutChart(Math.max(0, netSalary), Math.max(0, totalTax), Math.max(0, aga), Math.max(0, totalPension));
+    }
+
+    function updateItemTaxType(sIdx, iIdx, type) {
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx].taxType = type;
+      saveUsers(users);
+      updateCalculationsOnly();
+    }
+
+    function updateItem(sIdx, iIdx, key, val, isRateChange) {
+      const users = getUsers();
+      const item = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
+      
+      const numVal = parseFloat(val) || 0;
+      item[key] = (key === 'name' || key === 'date') ? val : numVal;
+      saveUsers(users);
+
+      if (item.isBase && isRateChange) {
+        recalcAllDivisors(numVal);
+      } else if (isRateChange && item.formulaDiv) {
+        delete item.formulaDiv;
+        saveUsers(users);
+      }
+
+      updateCalculationsOnly();
+    }
+
+    function duplicateItem(sIdx, iIdx) {
+      const users = getUsers();
+      const itemToCopy = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
+      const cloned = JSON.parse(JSON.stringify(itemToCopy));
+      users[currentUser].months[currentMonthKey].sections[sIdx].items.splice(iIdx + 1, 0, cloned);
+      saveUsers(users);
+      render();
+    }
+
+    function handleDragStart(e, sIdx, iIdx) {
+      draggedData = { sIdx, iIdx };
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', `${sIdx}:${iIdx}`);
+      const row = document.getElementById(`row-${sIdx}-${iIdx}`);
+      if (row) row.classList.add('dragging');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const targetRow = e.currentTarget;
+      const rect = targetRow.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+
+      if (e.clientY < midY) {
+        targetRow.classList.add('drag-over-top');
+        targetRow.classList.remove('drag-over-bottom');
+      } else {
+        targetRow.classList.add('drag-over-bottom');
+        targetRow.classList.remove('drag-over-top');
+      }
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+    }
+
+    function handleDrop(e, targetSIdx, targetIIdx) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+      if (!draggedData || draggedData.sIdx !== targetSIdx) return;
+
+      const fromIdx = draggedData.iIdx;
+      const toIdx = targetIIdx;
+      if (fromIdx === toIdx) return;
+
+      const users = getUsers();
+      const items = users[currentUser].months[currentMonthKey].sections[targetSIdx].items;
+      const [movedItem] = items.splice(fromIdx, 1);
+      items.splice(toIdx, 0, movedItem);
+
+      saveUsers(users);
+      render();
+    }
+
+    function handleDragEnd() {
+      document.querySelectorAll('.row').forEach(r => {
+        r.classList.remove('dragging', 'drag-over-top', 'drag-over-bottom');
+      });
+      draggedData = null;
+    }
+
+    function handleTouchStart(e, sIdx, iIdx) {
+      touchData = { sIdx, iIdx };
+      const row = document.getElementById(`row-${sIdx}-${iIdx}`);
+      if (row) row.classList.add('dragging');
+    }
+
+    function handleTouchMove(e) {
+      if (!touchData) return;
+      const touch = e.touches[0];
+      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+      const row = targetEl ? targetEl.closest('.row') : null;
+
+      document.querySelectorAll('.row').forEach(r => r.classList.remove('drag-over-top', 'drag-over-bottom'));
+      if (row && row.id && row.id.startsWith(`row-${touchData.sIdx}-`)) {
+        const rect = row.getBoundingClientRect();
+        if (touch.clientY < rect.top + rect.height / 2) {
+          row.classList.add('drag-over-top');
+        } else {
+          row.classList.add('drag-over-bottom');
+        }
+      }
+    }
+
+    function handleTouchEnd(e) {
+      if (!touchData) return;
+      const touch = e.changedTouches[0];
+      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+      const row = targetEl ? targetEl.closest('.row') : null;
+
+      document.querySelectorAll('.row').forEach(r => r.classList.remove('drag-over-top', 'drag-over-bottom'));
+      if (row && row.id && row.id.startsWith(`row-${touchData.sIdx}-`)) {
+        const parts = row.id.split('-');
+        const targetIIdx = parseInt(parts[2], 10);
+        if (touchData.iIdx !== targetIIdx) {
+          const users = getUsers();
+          const items = users[currentUser].months[currentMonthKey].sections[touchData.sIdx].items;
+          const [movedItem] = items.splice(touchData.iIdx, 1);
+          items.splice(targetIIdx, 0, movedItem);
+          saveUsers(users);
+          render();
+        }
+      }
+      touchData = null;
+    }
+
+    function addItem(sIdx) {
+      const users = getUsers();
+      const ym = currentMonthKey && currentMonthKey.match(/^\d{4}-\d{2}$/) ? currentMonthKey : "2026-10";
+      users[currentUser].months[currentMonthKey].sections[sIdx].items.push({ 
+        date: `${ym}-01`, 
+        name: "Ny post", 
+        qty: 1, 
+        rate: 0, 
+        taxType: "table" 
+      });
+      saveUsers(users);
+      render();
+    }
+
+    function deleteItem(sIdx, iIdx) {
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections[sIdx].items.splice(iIdx, 1);
+      saveUsers(users);
+      render();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedUser = localStorage.getItem("salary_app_active_user");
+      const users = getUsers();
+      if (savedUser && users[savedUser]) {
+        loginUser(savedUser);
+      }
+    });
+  </script>
+</body>
+</html>
