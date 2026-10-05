@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator</title>
+  <title>Lönekalkylator v1.0.0</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,9 +24,10 @@
       --pension-color: #a855f7;
       --danger: #ef4444;
       --input-bg: #0d1527;
+      --version-badge: #0284c7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 6px; padding-bottom: 90px; }
+    body { background-color: var(--bg); color: var(--text); padding: 6px; padding-bottom: 95px; }
     
     .container { max-width: 900px; margin: 0 auto; }
 
@@ -48,11 +49,15 @@
     .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
     
     .app-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px; margin-bottom: 8px; }
+    .app-title-wrap { display: flex; align-items: center; gap: 8px; }
+    .version-tag { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.4); font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.3px; }
     .user-info { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
     .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
     .btn-small:hover { background: #334155; }
     .btn-small:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-admin { background: #6366f1; }
+    .btn-download-app { background: #0284c7; color: white; }
+    .btn-download-app:hover { background: #0369a1; }
     
     .backup-bar { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 6px; padding: 6px 8px; }
     .backup-row { display: flex; justify-content: space-between; align-items: center; }
@@ -100,6 +105,7 @@
     .badge-deduct { background: rgba(239, 68, 68, 0.15); color: #f87171; }
     .badge-neutral { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
 
+    /* --- EN-RADS-LAYOUT (MED KRYSSRUTA) --- */
     .row-grid {
       display: grid;
       grid-template-columns: 22px minmax(95px, 1fr) 38px 60px 70px;
@@ -181,6 +187,7 @@
     .batch-btn.danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
     .batch-btn.danger:hover { background: var(--danger); color: white; }
 
+    .app-footer { text-align: center; margin-top: 24px; padding: 12px; font-size: 0.72rem; color: var(--muted); border-top: 1px solid rgba(255,255,255,0.05); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -188,13 +195,16 @@
 
   <div class="container">
     <div id="authView" class="auth-wrap">
+      <div style="display:flex; justify-content:center; margin-bottom: 6px;">
+        <span class="version-tag">v1.0.0</span>
+      </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
         <label>Användarnamn</label>
         <input type="text" id="usernameInput" value="Knaspulkan" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
       <div class="auth-field">
-        <label>Lösenord</label>
+        <label>Lösenord (valfritt lokalt)</label>
         <input type="password" id="passwordInput" placeholder="••••••••" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
       <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
@@ -203,8 +213,12 @@
 
     <div id="appView" class="hidden">
       <div class="app-header">
-        <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
+        <div class="app-title-wrap">
+          <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
+          <span class="version-tag">v1.0.0</span>
+        </div>
         <div class="user-info">
+          <button class="btn-small btn-download-app" onclick="downloadAppSourceFile()" title="Ladda ner denna index.html fil direkt">📥 Ladda ner HTML</button>
           <button class="btn-small" id="undoBtn" onclick="undoAction()" disabled title="Ångra senaste ändringen">↩ Ångra</button>
           <span id="currentUserLabel"></span>
           <button class="btn-small" onclick="logout()">Logga ut</button>
@@ -213,10 +227,10 @@
 
       <div class="backup-bar">
         <div class="backup-row">
-          <span>Min säkerhetskopia</span>
+          <span>Min säkerhetskopia (Data)</span>
           <div class="backup-actions">
-            <button class="btn-small" onclick="exportUserData()">Spara</button>
-            <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ</button>
+            <button class="btn-small" onclick="exportUserData()">Spara data</button>
+            <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ data</button>
             <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importUserData(event)">
           </div>
         </div>
@@ -300,6 +314,11 @@
       </div>
 
       <div id="sections"></div>
+
+      <footer class="app-footer">
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.0.0</strong></div>
+        <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
+      </footer>
     </div>
   </div>
 
@@ -313,21 +332,57 @@
   </div>
 
   <script>
-    // Officiell formel för Skatteverkets tabell 33 (och närliggande tabeller)
+    const APP_VERSION = "v1.0.0";
+
+    // Funktion för att ladda ner den aktiva källkoden som index-v1.0.0.html
+    function downloadAppSourceFile() {
+      const fullHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `index-${APP_VERSION}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // PWA Cache v1.0.0 - rensar automatiskt gammal cache och uppdaterar
+    (function setupPWA() {
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        const swCode = `
+          const CACHE_NAME = 'loneapp-cache-v1-0-0';
+          self.addEventListener('install', e => {
+            self.skipWaiting();
+          });
+          self.addEventListener('activate', e => {
+            e.waitUntil(
+              caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
+            );
+            return self.clients.claim();
+          });
+          self.addEventListener('fetch', e => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+    })();
+
+    // Skatteverkets tabell 33 beräkning
     function getSkatteverketTax(monthlyIncome, tabellNum = 33) {
       if (monthlyIncome <= 0) return 0;
       
-      // Hitta intervall (Skatteverkets intervall är i steg om 200 kr)
       const lower = Math.floor((monthlyIncome - 1) / 200) * 200 + 1;
       const upper = lower + 199;
       const midIncome = (lower + upper) / 2;
       const annual = midIncome * 12;
 
-      // Parametrar för 2026
       const pbb = 59200;
       const tabellRate = tabellNum / 100;
 
-      // 1. Grundavdrag (GA)
+      // Grundavdrag
       let ga = 0;
       if (annual < 0.99 * pbb) ga = 0.423 * pbb;
       else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
@@ -336,7 +391,7 @@
       else ga = 0.293 * pbb;
       ga = Math.round(ga / 100) * 100;
 
-      // 2. Jobbskatteavdrag (JSA) - utan avtrappning
+      // Jobbskatteavdrag (JSA)
       let jsa = 0;
       const pbb1 = 0.91 * pbb;
       const pbb2 = 3.24 * pbb;
@@ -349,24 +404,22 @@
       } else if (annual <= pbb3) {
         jsa = (1.708 * pbb + 0.128 * (annual - pbb2)) * tabellRate;
       } else {
-        // Platånivå (ingen avtrappning längre)
         jsa = 2.328 * pbb * tabellRate;
       }
 
-      // 3. Beskattningsbar inkomst och kommunalskatt
       const taxableAnnual = Math.max(0, annual - ga);
       let taxAnnual = (taxableAnnual * tabellRate) - jsa;
 
-      // 4. Skattereduktion för förvärvsinkomst
+      // Skattereduktion för förvärvsinkomst
       taxAnnual -= 1500;
 
-      // 5. Statlig inkomstskatt (skiktgräns 643 000 kr)
+      // Statlig inkomstskatt (skiktgräns 643 000 kr)
       const skiktgrans = 643000;
       if (taxableAnnual > skiktgrans) {
         taxAnnual += (taxableAnnual - skiktgrans) * 0.20;
       }
 
-      // 6. Public service-avgift schablon (~1 184 kr/år)
+      // Public service-avgift
       taxAnnual += 1184;
 
       return Math.round(Math.max(0, taxAnnual / 12));
@@ -536,36 +589,40 @@
     }
 
     function loginUser(username) {
-      currentUser = username;
-      localStorage.setItem("salary_app_active_user", username);
-      
-      document.getElementById("authView").classList.add("hidden");
-      document.getElementById("appView").classList.remove("hidden");
-      document.getElementById("currentUserLabel").textContent = username;
-      document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
+      try {
+        currentUser = username;
+        localStorage.setItem("salary_app_active_user", username);
+        
+        document.getElementById("authView").classList.add("hidden");
+        document.getElementById("appView").classList.remove("hidden");
+        document.getElementById("currentUserLabel").textContent = username;
+        document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
 
-      const users = getUsers();
-      if (!users[username]) {
-        users[username] = {
-          currentMonth: "2026-10",
-          months: {
-            "2026-10": {
-              taxTable: 33,
-              oneTimeTaxRate: 54,
-              agreement: "teknik_unionen",
-              sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+        const users = getUsers();
+        if (!users[username]) {
+          users[username] = {
+            currentMonth: "2026-10",
+            months: {
+              "2026-10": {
+                taxTable: 33,
+                oneTimeTaxRate: 54,
+                agreement: "teknik_unionen",
+                sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+              }
             }
-          }
-        };
-        saveUsers(users);
-      }
+          };
+          saveUsers(users);
+        }
 
-      const userObj = users[username];
-      const monthKeys = Object.keys(userObj.months || {}).sort();
-      currentMonthKey = userObj.currentMonth || (monthKeys.length ? monthKeys[monthKeys.length - 1] : "2026-10");
-      
-      populateMonthDropdown();
-      loadCurrentMonth();
+        const userObj = users[username];
+        const monthKeys = Object.keys(userObj.months || {}).sort();
+        currentMonthKey = userObj.currentMonth || (monthKeys.length ? monthKeys[monthKeys.length - 1] : "2026-10");
+        
+        populateMonthDropdown();
+        loadCurrentMonth();
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     function logout() {
@@ -1001,7 +1058,16 @@
       sections.forEach((sec, sIdx) => {
         (sec.items || []).forEach((item, iIdx) => {
           const sum = (item.qty || 0) * (item.rate || 0);
-          const cat = sec.taxCategory || "table";
+          
+          let cat = sec.taxCategory;
+          if (!cat) {
+            if (sec.id === "fixed_income" || sec.title.includes("Fast lön")) cat = "table";
+            else if (sec.id === "variable_income" || sec.title.includes("Övertid")) cat = "onetime";
+            else if (sec.id === "benefits" || sec.title.includes("förmåner")) cat = "benefit";
+            else if (sec.id === "preTaxDed" || sec.title.includes("före skatt")) cat = "deduction";
+            else if (sec.id === "postTax" || sec.title.includes("Netto")) cat = "net";
+            else cat = "table";
+          }
 
           if (cat === "table") {
             tableTaxBase += sum;
@@ -1022,18 +1088,20 @@
         });
       });
 
-      // Skatteunderlag för tabellskatt: Fast lön + schematillägg + skattepliktig förmån - bruttoavdrag
+      // Tabellskatt beräknas ENDAST på fast lön + schematillägg + förmån - bruttoavdrag
       const finalTableBase = Math.max(0, tableTaxBase + benefitBase - preDeductions);
       const tableTax = getSkatteverketTax(finalTableBase, selectedTaxTable);
+      
+      // Engångsskatt beräknas ENDAST på övertid & rörliga tillägg
       const oneTimeTax = Math.round(oneTimeTaxBase * oneTimeRate);
+      
       const totalTax = tableTax + oneTimeTax;
-
       const totalGrossDisplay = grossSalaryForPayout - preDeductions;
       const netSalary = totalGrossDisplay - totalTax + netAdjustments;
       const aga = Math.round(totalGrossDisplay * 0.3142);
       const totalEmployerCost = totalGrossDisplay + aga;
 
-      // Pensionsgrundande lön (ITP1)
+      // Pensionsavsättning (ITP1)
       const allmanPension = Math.round(Math.min(totalGrossDisplay, 49375) * 0.185);
       let itp1 = 0;
       if (totalGrossDisplay <= 49375) {
@@ -1082,6 +1150,7 @@
       render();
     }
 
+    // Initialisera vid laddning
     window.addEventListener("DOMContentLoaded", () => {
       const savedUser = localStorage.getItem("salary_app_active_user");
       const users = getUsers();
