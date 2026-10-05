@@ -100,10 +100,8 @@
     .badge-deduct { background: rgba(239, 68, 68, 0.15); color: #f87171; }
     .badge-neutral { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
 
-    /* --- EN-RADS-LAYOUT (MED KRYSSRUTA) --- */
     .row-grid {
       display: grid;
-      /* Checkbox(22px) | Beskrivning(1fr) | Antal(38px) | Á-pris(60px) | Summa(70px) */
       grid-template-columns: 22px minmax(95px, 1fr) 38px 60px 70px;
       gap: 5px;
       padding: 5px 6px;
@@ -124,7 +122,6 @@
       padding: 4px 6px;
     }
 
-    /* Checkbox anpassad för klick & touch */
     .row-checkbox {
       width: 17px;
       height: 17px;
@@ -151,7 +148,6 @@
     .btn-add { font-size: 0.75rem; color: var(--accent); font-weight: 600; background: none; border: none; cursor: pointer; padding: 7px 10px; width: 100%; text-align: left; }
     .btn-add:hover { background: rgba(16,185,129,0.05); }
 
-    /* --- FLYTANDE ÅTGÄRDSLIST VID MARKERING --- */
     .batch-bar {
       position: fixed;
       bottom: 12px;
@@ -166,11 +162,6 @@
       align-items: center;
       gap: 8px;
       z-index: 100;
-      animation: popIn 0.2s ease-out;
-    }
-    @keyframes popIn {
-      from { transform: translate(-50%, 20px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
     }
     .batch-count { font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
     .batch-btn {
@@ -200,11 +191,11 @@
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
         <label>Användarnamn</label>
-        <input type="text" id="usernameInput" placeholder="Användarnamn" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
+        <input type="text" id="usernameInput" value="Knaspulkan" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
       <div class="auth-field">
-        <label>Lösenord</label>
-        <input type="password" id="passwordInput" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
+        <label>Lösenord (valfritt lokalt)</label>
+        <input type="password" id="passwordInput" placeholder="••••••••" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
       <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
       <div class="auth-switch" id="authToggleText" onclick="toggleAuthMode()">Inget konto? Skapa användare här</div>
@@ -252,4 +243,835 @@
           <div style="flex: 1; min-width: 190px; display:flex; gap: 4px; align-items:center;">
             <label>Avtal:</label>
             <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
-              <option value="teknik
+              <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
+              <option value="livs">Livsmedelsavtalet (Livs)</option>
+              <option value="teknik_metall">Teknikavtalet (IF Metall)</option>
+              <option value="handels">Handels (Butik & Lager)</option>
+              <option value="el">Installationsavtalet (Elektrikerna)</option>
+              <option value="custom">Anpassad / Egen</option>
+            </select>
+            <button class="btn-small" onclick="forceResetToAgreement()" title="Läs in mallens rader">Återställ</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <label>Skattetabell:</label>
+            <select id="taxTable" onchange="updateTaxSetting('taxTable', this.value)" style="width: auto;">
+              <option value="33" selected>Tabell 33</option>
+              <option value="31">Tabell 31</option>
+              <option value="32">Tabell 32</option>
+              <option value="34">Tabell 34</option>
+            </select>
+          </div>
+          <div>
+            <label>Engångsskatt (%):</label>
+            <input type="number" id="oneTimeTaxRate" value="54" style="width: 48px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-center">
+        <div class="donut-wrapper">
+          <svg id="donutChart" width="110" height="110" viewBox="0 0 42 42"></svg>
+          <div class="donut-inner-text">
+            <small>Nettolön</small>
+            <strong id="center-netto">0 kr</strong>
+          </div>
+        </div>
+
+        <div class="stacked-metrics">
+          <div class="metric-row aga">
+            <span class="metric-label" style="color:var(--aga-color)">Total lönekostnad</span>
+            <span class="metric-val" style="color:var(--aga-color)" id="metric-totalkostnad">0 kr</span>
+          </div>
+          <div class="metric-row brutto">
+            <span class="metric-label">Bruttolön</span>
+            <span class="metric-val" id="metric-brutto">0 kr</span>
+          </div>
+          <div class="metric-row pension">
+            <span class="metric-label" style="color:var(--pension-color)">Pensionsavsättning</span>
+            <span class="metric-val" style="color:var(--pension-color)" id="metric-pension">0 kr</span>
+          </div>
+          <div class="metric-row skatt">
+            <span class="metric-label" style="color:var(--tax-color)">Preliminärskatt</span>
+            <span class="metric-val" style="color:var(--tax-color)" id="metric-skatt">0 kr</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sections"></div>
+    </div>
+  </div>
+
+  <div id="batchBar" class="batch-bar hidden">
+    <span class="batch-count" id="batchCountLabel">0 valda</span>
+    <button class="batch-btn" onclick="batchDuplicate()">⎘ Kopiera</button>
+    <button class="batch-btn" onclick="batchMove(-1)">↑ Upp</button>
+    <button class="batch-btn" onclick="batchMove(1)">↓ Ned</button>
+    <button class="batch-btn danger" onclick="batchDelete()">✕ Ta bort</button>
+    <button class="batch-btn" style="background:transparent; padding: 5px 6px;" onclick="clearSelection()" title="Avmarkera">✕</button>
+  </div>
+
+  <script>
+    function getSkatteverketTabell33(monthlyIncome) {
+      if (monthlyIncome <= 0) return 0;
+      const annual = monthlyIncome * 12;
+      const pbb = 57300;
+
+      let ga = 0;
+      if (annual < 0.99 * pbb) ga = 0.423 * pbb;
+      else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
+      else if (annual < 3.11 * pbb) ga = 0.77 * pbb;
+      else if (annual < 7.88 * pbb) ga = 0.77 * pbb - 0.1 * (annual - 3.11 * pbb);
+      else ga = 0.293 * pbb;
+
+      let jsa = 0;
+      if (annual < 0.91 * pbb) jsa = (annual - ga) * 0.33;
+      else if (annual < 3.24 * pbb) jsa = (0.91 * pbb + 0.34 * (annual - 0.91 * pbb) - ga) * 0.33;
+      else if (annual < 8.08 * pbb) jsa = (1.702 * pbb + 0.128 * (annual - 3.24 * pbb) - ga) * 0.33;
+      else if (annual < 13.54 * pbb) jsa = (2.322 * pbb - ga) * 0.33;
+      else jsa = Math.max(0, (2.322 * pbb - ga) * 0.33 - 0.03 * (annual - 13.54 * pbb));
+      jsa = Math.max(0, jsa);
+
+      const taxableAnnual = Math.max(0, annual - ga);
+      let taxAnnual = (taxableAnnual * 0.33) - jsa;
+
+      const skiktgrans = 598500;
+      if (taxableAnnual > skiktgrans) {
+        taxAnnual += (taxableAnnual - skiktgrans) * 0.20;
+      }
+
+      return Math.round(Math.max(0, taxAnnual / 12));
+    }
+
+    const agreementTemplates = {
+      teknik_unionen: {
+        name: "Teknikavtalet (Unionen / Tjänstemän)",
+        sections: [
+          {
+            id: "fixed_income",
+            title: "Fast lön & schematillägg",
+            taxCategory: "table",
+            badgeText: "Tabellskatt",
+            badgeClass: "badge-tabell",
+            items: [
+              { name: "Månadslön", qty: 1, rate: 46332, isBase: true },
+              { name: "Beredskap Fast", qty: 1, rate: 6097 },
+              { name: "Rörl beredskap/v", qty: 1, rate: 5205 },
+              { name: "Förskjuten tid 2/400", qty: 16, rate: 131.07, formulaDiv: 400 },
+              { name: "Förskjuten tid 3/300", qty: 5, rate: 174.76, formulaDiv: 300 },
+              { name: "Restid vardag", qty: 2, rate: 218.45, formulaDiv: 240 },
+              { name: "Restid helg", qty: 2, rate: 275.94, formulaDiv: 190 }
+            ]
+          },
+          {
+            id: "variable_income",
+            title: "Övertid & rörliga tillägg",
+            taxCategory: "onetime",
+            badgeText: "Engångsskatt (54%)",
+            badgeClass: "badge-onetime",
+            items: [
+              { name: "Omvandl komp 2.0", qty: 15.5, rate: 728.18 },
+              { name: "Övertid enkel", qty: 0, rate: 492.89, formulaDiv: 94 },
+              { name: "Övertid kval", qty: 0, rate: 643.50, formulaDiv: 72 }
+            ]
+          },
+          {
+            id: "benefits",
+            title: "Skattepliktiga förmåner",
+            taxCategory: "benefit",
+            badgeText: "Förmånsvärde",
+            badgeClass: "badge-benefit",
+            items: [
+              { name: "Matkup förmån", qty: 1, rate: 62 }
+            ]
+          },
+          {
+            id: "preTaxDed",
+            title: "Avdrag före skatt",
+            taxCategory: "deduction",
+            badgeText: "Bruttoavdrag",
+            badgeClass: "badge-deduct",
+            items: [
+              { name: "Tjänstledighet", qty: 0, rate: 265, formulaDiv: 175 },
+              { name: "Sjukavdrag", qty: 0, rate: 265, formulaDiv: 175 },
+              { name: "VAB avdrag", qty: 0, rate: 265, formulaDiv: 175 }
+            ]
+          },
+          {
+            id: "postTax",
+            title: "Nettojusteringar",
+            taxCategory: "net",
+            badgeText: "Netto",
+            badgeClass: "badge-neutral",
+            items: [
+              { name: "Matkupong avdrag", qty: 1, rate: -62 },
+              { name: "Personalköp", qty: 1, rate: -75 },
+              { name: "Personalköp", qty: 1, rate: -131 }
+            ]
+          },
+          {
+            id: "external",
+            title: "Externa tillägg",
+            taxCategory: "external",
+            badgeText: "Utbetalning",
+            badgeClass: "badge-neutral",
+            items: [
+              { name: "Barnbidrag", qty: 0, rate: 1325 }
+            ]
+          }
+        ]
+      }
+    };
+
+    let isRegisterMode = false;
+    let currentUser = null;
+    let currentMonthKey = null;
+    let selectedKeys = new Set();
+    let undoStack = [];
+
+    function saveUndoState() {
+      try {
+        const users = getUsers();
+        if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+        const currentSections = users[currentUser].months[currentMonthKey].sections;
+        undoStack.push(JSON.stringify(currentSections));
+        if (undoStack.length > 25) undoStack.shift();
+        updateUndoButton();
+      } catch (e) {}
+    }
+
+    function updateUndoButton() {
+      const btn = document.getElementById("undoBtn");
+      if (btn) btn.disabled = (undoStack.length === 0);
+    }
+
+    function undoAction() {
+      if (!undoStack.length) return;
+      const prevSectionsJson = undoStack.pop();
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections = JSON.parse(prevSectionsJson);
+      saveUsers(users);
+      selectedKeys.clear();
+      updateBatchBar();
+      updateUndoButton();
+      render();
+    }
+
+    function getUsers() {
+      try {
+        return JSON.parse(localStorage.getItem("salary_app_users") || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveUsers(users) {
+      try {
+        localStorage.setItem("salary_app_users", JSON.stringify(users));
+      } catch (e) {}
+    }
+
+    function toggleAuthMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById("authTitle").textContent = isRegisterMode ? "Skapa användare" : "Logga in";
+      document.getElementById("authSubmitBtn").textContent = isRegisterMode ? "Registrera" : "Logga in";
+      document.getElementById("authToggleText").textContent = isRegisterMode ? "Har du redan ett konto? Logga in här" : "Inget konto? Skapa användare här";
+    }
+
+    function handleAuthSubmit() {
+      const uRaw = document.getElementById("usernameInput").value.trim();
+      const u = uRaw.toLowerCase() || "användare";
+      const users = getUsers();
+      const initialMonth = "2026-10";
+
+      let matchedKey = Object.keys(users).find(k => k.toLowerCase() === u);
+
+      if (!matchedKey) {
+        users[u] = {
+          currentMonth: initialMonth,
+          agreement: "teknik_unionen",
+          months: {
+            [initialMonth]: {
+              taxTable: 33,
+              oneTimeTaxRate: 54,
+              agreement: "teknik_unionen",
+              sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+            }
+          }
+        };
+        saveUsers(users);
+        matchedKey = u;
+      }
+
+      loginUser(matchedKey);
+    }
+
+    function loginUser(username) {
+      try {
+        currentUser = username;
+        localStorage.setItem("salary_app_active_user", username);
+        
+        document.getElementById("authView").classList.add("hidden");
+        document.getElementById("appView").classList.remove("hidden");
+        document.getElementById("currentUserLabel").textContent = username;
+        document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
+
+        const users = getUsers();
+        if (!users[username]) {
+          users[username] = {
+            currentMonth: "2026-10",
+            months: {
+              "2026-10": {
+                taxTable: 33,
+                oneTimeTaxRate: 54,
+                agreement: "teknik_unionen",
+                sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
+              }
+            }
+          };
+          saveUsers(users);
+        }
+
+        const userObj = users[username];
+        const monthKeys = Object.keys(userObj.months || {}).sort();
+        currentMonthKey = userObj.currentMonth || (monthKeys.length ? monthKeys[monthKeys.length - 1] : "2026-10");
+        
+        // Återställ till den nya sektionsstrukturen om gammal data saknar badges
+        if (users[username].months[currentMonthKey]?.sections?.some(s => s.id === "taxable")) {
+          users[username].months[currentMonthKey].sections = JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections));
+          saveUsers(users);
+        }
+
+        populateMonthDropdown();
+        loadCurrentMonth();
+      } catch (err) {
+        console.error(err);
+        alert("Ett fel uppstod vid inloggning: " + err.message);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("salary_app_active_user");
+      currentUser = null;
+      document.getElementById("appView").classList.add("hidden");
+      document.getElementById("authView").classList.remove("hidden");
+    }
+
+    function applyAgreementTemplate(agrKey) {
+      saveUndoState();
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].agreement = agrKey;
+      saveUsers(users);
+    }
+
+    function forceResetToAgreement() {
+      const agrKey = document.getElementById("agreementSelect").value;
+      if (!agreementTemplates[agrKey]) return;
+      if (!confirm("Detta återställer månadens rader till mallens standard. Fortsätt?")) return;
+
+      saveUndoState();
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections = JSON.parse(JSON.stringify(agreementTemplates[agrKey].sections));
+      users[currentUser].months[currentMonthKey].oneTimeTaxRate = 54;
+      users[currentUser].months[currentMonthKey].taxTable = 33;
+      saveUsers(users);
+      selectedKeys.clear();
+      updateBatchBar();
+      render();
+    }
+
+    function extractDivisor(item) {
+      if (item.formulaDiv) return item.formulaDiv;
+      const match = item.name.match(/\[1\/(\d+)\]/);
+      if (match && match[1]) {
+        item.formulaDiv = parseInt(match[1], 10);
+        return item.formulaDiv;
+      }
+      return null;
+    }
+
+    function recalcAllDivisors(baseSalary) {
+      const users = getUsers();
+      const sections = users[currentUser].months[currentMonthKey].sections;
+
+      sections.forEach((sec, sI) => {
+        sec.items.forEach((item, iI) => {
+          const div = extractDivisor(item);
+          if (div && baseSalary > 0) {
+            item.rate = Math.round((baseSalary / div) * 100) / 100;
+            const inputEl = document.getElementById(`input-rate-${sI}-${iI}`);
+            if (inputEl) inputEl.value = item.rate;
+          }
+        });
+      });
+      saveUsers(users);
+    }
+
+    function exportUserData() {
+      const users = getUsers();
+      const userData = users[currentUser];
+      if (!userData) return;
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData, null, 2));
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `lonebackup-${currentUser}-${dateStr}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importUserData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed.months) throw new Error("Ogiltig fil");
+          if (!confirm("Ersätt dina sparade månader med backup-filen?")) return;
+
+          saveUndoState();
+          const users = getUsers();
+          users[currentUser].months = parsed.months;
+          users[currentUser].currentMonth = parsed.currentMonth || Object.keys(parsed.months)[0];
+          saveUsers(users);
+
+          currentMonthKey = users[currentUser].currentMonth;
+          populateMonthDropdown();
+          loadCurrentMonth();
+          alert("Din data är återställd!");
+        } catch (err) {
+          alert("Kunde inte läsa in backup-filen.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function exportAllUsers() {
+      const users = getUsers();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2));
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `loneapp-ALLA-ANVANDARE-${dateStr}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importAllUsers(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (typeof parsed !== "object") throw new Error("Ogiltig databasfil");
+          if (!confirm("VARNING: Detta skriver över hela databasen för samtliga användare. Fortsätt?")) return;
+
+          saveUsers(parsed);
+          populateMonthDropdown();
+          loadCurrentMonth();
+          alert("Hela användardatabasen återställd!");
+        } catch (err) {
+          alert("Kunde inte återställa databasen.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function populateMonthDropdown() {
+      const users = getUsers();
+      const months = Object.keys(users[currentUser]?.months || {}).sort();
+      const select = document.getElementById("monthSelect");
+      select.innerHTML = "";
+      months.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        if (m === currentMonthKey) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function changeMonth(mKey) {
+      currentMonthKey = mKey;
+      const users = getUsers();
+      users[currentUser].currentMonth = mKey;
+      saveUsers(users);
+      undoStack = [];
+      selectedKeys.clear();
+      updateBatchBar();
+      updateUndoButton();
+      loadCurrentMonth();
+    }
+
+    function createNewMonth() {
+      const name = prompt("Ange namn på ny månad (t.ex. 2026-11):");
+      if (!name) return;
+      const users = getUsers();
+      if (users[currentUser].months[name]) return alert("Denna månad finns redan!");
+
+      saveUndoState();
+      const prevData = users[currentUser].months[currentMonthKey];
+      const clonedSections = JSON.parse(JSON.stringify(prevData.sections));
+
+      users[currentUser].months[name] = {
+        taxTable: prevData.taxTable || 33,
+        oneTimeTaxRate: prevData.oneTimeTaxRate || 54,
+        agreement: prevData.agreement || "teknik_unionen",
+        sections: clonedSections
+      };
+      users[currentUser].currentMonth = name;
+      currentMonthKey = name;
+      saveUsers(users);
+
+      populateMonthDropdown();
+      loadCurrentMonth();
+    }
+
+    function updateTaxSetting(key, val) {
+      saveUndoState();
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey][key] = parseFloat(val) || 0;
+      saveUsers(users);
+      updateCalculationsOnly();
+    }
+
+    function loadCurrentMonth() {
+      const users = getUsers();
+      if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+      const mData = users[currentUser].months[currentMonthKey];
+      document.getElementById("taxTable").value = mData.taxTable || 33;
+      document.getElementById("oneTimeTaxRate").value = mData.oneTimeTaxRate !== undefined ? mData.oneTimeTaxRate : 54;
+      document.getElementById("agreementSelect").value = mData.agreement || "teknik_unionen";
+      render();
+    }
+
+    function renderDonutChart(netto, skatt, aga, pension) {
+      const svg = document.getElementById("donutChart");
+      const total = netto + skatt + aga + pension;
+      
+      if (total <= 0) {
+        svg.innerHTML = '<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>';
+        return;
+      }
+
+      const nettoPct = (netto / total) * 100;
+      const skattPct = (skatt / total) * 100;
+      const agaPct = (aga / total) * 100;
+      const pensionPct = (pension / total) * 100;
+
+      const off1 = 25;
+      const off2 = 25 - nettoPct;
+      const off3 = 25 - nettoPct - skattPct;
+      const off4 = 25 - nettoPct - skattPct - agaPct;
+
+      svg.innerHTML = `
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--accent)" stroke-width="4.5"
+          stroke-dasharray="${nettoPct} ${100 - nettoPct}" stroke-dashoffset="${off1}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--tax-color)" stroke-width="4.5"
+          stroke-dasharray="${skattPct} ${100 - skattPct}" stroke-dashoffset="${off2}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--aga-color)" stroke-width="4.5"
+          stroke-dasharray="${agaPct} ${100 - agaPct}" stroke-dashoffset="${off3}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--pension-color)" stroke-width="4.5"
+          stroke-dasharray="${pensionPct} ${100 - pensionPct}" stroke-dashoffset="${off4}"></circle>
+      `;
+    }
+
+    function formatKr(val) {
+      const rounded = Math.round(val || 0);
+      return rounded.toLocaleString('sv-SE') + " kr";
+    }
+
+    function toggleSelectRow(sIdx, iIdx, checked) {
+      const key = `${sIdx}-${iIdx}`;
+      if (checked) selectedKeys.add(key);
+      else selectedKeys.delete(key);
+      
+      const rowEl = document.getElementById(`row-${sIdx}-${iIdx}`);
+      if (rowEl) {
+        if (checked) rowEl.classList.add("selected-row");
+        else rowEl.classList.remove("selected-row");
+      }
+      updateBatchBar();
+    }
+
+    function clearSelection() {
+      selectedKeys.clear();
+      document.querySelectorAll(".row-grid").forEach(r => r.classList.remove("selected-row"));
+      document.querySelectorAll(".row-checkbox").forEach(c => c.checked = false);
+      updateBatchBar();
+    }
+
+    function updateBatchBar() {
+      const bar = document.getElementById("batchBar");
+      const count = selectedKeys.size;
+      if (count > 0) {
+        document.getElementById("batchCountLabel").textContent = `${count} vald${count > 1 ? 'a' : ''}`;
+        bar.classList.remove("hidden");
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    function batchDelete() {
+      if (!selectedKeys.size) return;
+      saveUndoState();
+
+      const users = getUsers();
+      const sections = users[currentUser].months[currentMonthKey].sections;
+
+      const targets = Array.from(selectedKeys).map(k => {
+        const [s, i] = k.split('-').map(Number);
+        return { sIdx: s, iIdx: i };
+      }).sort((a, b) => b.iIdx - a.iIdx);
+
+      targets.forEach(t => {
+        if (sections[t.sIdx] && sections[t.sIdx].items[t.iIdx]) {
+          sections[t.sIdx].items.splice(t.iIdx, 1);
+        }
+      });
+
+      saveUsers(users);
+      selectedKeys.clear();
+      updateBatchBar();
+      render();
+    }
+
+    function batchDuplicate() {
+      if (!selectedKeys.size) return;
+      saveUndoState();
+
+      const users = getUsers();
+      const sections = users[currentUser].months[currentMonthKey].sections;
+
+      const targets = Array.from(selectedKeys).map(k => {
+        const [s, i] = k.split('-').map(Number);
+        return { sIdx: s, iIdx: i };
+      }).sort((a, b) => b.iIdx - a.iIdx);
+
+      targets.forEach(t => {
+        const item = sections[t.sIdx]?.items[t.iIdx];
+        if (item) {
+          const cloned = JSON.parse(JSON.stringify(item));
+          sections[t.sIdx].items.splice(t.iIdx + 1, 0, cloned);
+        }
+      });
+
+      saveUsers(users);
+      selectedKeys.clear();
+      updateBatchBar();
+      render();
+    }
+
+    function batchMove(direction) {
+      if (!selectedKeys.size) return;
+      saveUndoState();
+
+      const users = getUsers();
+      const sections = users[currentUser].months[currentMonthKey].sections;
+
+      const targets = Array.from(selectedKeys).map(k => {
+        const [s, i] = k.split('-').map(Number);
+        return { sIdx: s, iIdx: i };
+      });
+
+      if (direction === -1) {
+        targets.sort((a, b) => a.iIdx - b.iIdx);
+      } else {
+        targets.sort((a, b) => b.iIdx - a.iIdx);
+      }
+
+      let newSelectedKeys = new Set();
+
+      targets.forEach(t => {
+        const items = sections[t.sIdx]?.items;
+        const targetIdx = t.iIdx + direction;
+        if (items && targetIdx >= 0 && targetIdx < items.length) {
+          const [moved] = items.splice(t.iIdx, 1);
+          items.splice(targetIdx, 0, moved);
+          newSelectedKeys.add(`${t.sIdx}-${targetIdx}`);
+        } else {
+          newSelectedKeys.add(`${t.sIdx}-${t.iIdx}`);
+        }
+      });
+
+      saveUsers(users);
+      selectedKeys = newSelectedKeys;
+      render();
+      updateBatchBar();
+    }
+
+    function render() {
+      const users = getUsers();
+      if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+      const mData = users[currentUser].months[currentMonthKey];
+      const sections = mData.sections || [];
+      const container = document.getElementById("sections");
+      container.innerHTML = "";
+
+      sections.forEach((sec, sIdx) => {
+        const card = document.createElement("div");
+        card.className = "section-card";
+
+        let html = `
+          <div class="section-header">
+            <span>${sec.title}</span>
+            <span class="section-badge ${sec.badgeClass || 'badge-neutral'}">${sec.badgeText || ''}</span>
+          </div>
+          <div class="row-grid row-header">
+            <div></div>
+            <div>Beskrivning</div>
+            <div style="text-align:right">Ant</div>
+            <div style="text-align:right">Á-pris</div>
+            <div style="text-align:right">Summa</div>
+          </div>
+          <div id="section-rows-${sIdx}">
+        `;
+
+        (sec.items || []).forEach((item, iIdx) => {
+          const sum = (item.qty || 0) * (item.rate || 0);
+          const isSelected = selectedKeys.has(`${sIdx}-${iIdx}`);
+
+          html += `
+            <div class="row-grid ${isSelected ? 'selected-row' : ''}" id="row-${sIdx}-${iIdx}">
+              <div style="display:flex; justify-content:center;">
+                <input type="checkbox" class="row-checkbox" ${isSelected ? 'checked' : ''} onchange="toggleSelectRow(${sIdx}, ${iIdx}, this.checked)">
+              </div>
+              <div><input type="text" value="${item.name || ''}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
+              <div><input type="number" step="any" value="${item.qty !== undefined ? item.qty : 0}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
+              <div><input type="number" step="any" value="${item.rate !== undefined ? item.rate : 0}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
+              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${formatKr(sum)}</div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
+        `;
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+
+      updateCalculationsOnly();
+    }
+
+    function updateCalculationsOnly() {
+      const users = getUsers();
+      if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
+      const mData = users[currentUser].months[currentMonthKey];
+      const sections = mData.sections || [];
+      const oneTimeRate = (mData.oneTimeTaxRate !== undefined ? mData.oneTimeTaxRate : 54) / 100;
+
+      let tableTaxBase = 0;
+      let oneTimeTaxBase = 0;
+      let benefitBase = 0;
+      let preDeductions = 0;
+      let netAdjustments = 0;
+      let grossSalaryForPayout = 0;
+
+      sections.forEach((sec, sIdx) => {
+        (sec.items || []).forEach((item, iIdx) => {
+          const sum = (item.qty || 0) * (item.rate || 0);
+          const cat = sec.taxCategory || "table";
+
+          if (cat === "table") {
+            tableTaxBase += sum;
+            grossSalaryForPayout += sum;
+          } else if (cat === "onetime") {
+            oneTimeTaxBase += sum;
+            grossSalaryForPayout += sum;
+          } else if (cat === "benefit") {
+            benefitBase += sum;
+          } else if (cat === "deduction") {
+            preDeductions += sum;
+          } else if (cat === "net") {
+            netAdjustments += sum;
+          }
+
+          const sumEl = document.getElementById(`col-sum-${sIdx}-${iIdx}`);
+          if (sumEl) sumEl.textContent = formatKr(sum);
+        });
+      });
+
+      const finalTableBase = Math.max(0, tableTaxBase + benefitBase - preDeductions);
+      const tableTax = getSkatteverketTabell33(finalTableBase);
+      const oneTimeTax = Math.round(oneTimeTaxBase * oneTimeRate);
+      const totalTax = tableTax + oneTimeTax;
+
+      const totalGrossDisplay = grossSalaryForPayout - preDeductions;
+      const netSalary = totalGrossDisplay - totalTax + netAdjustments;
+      const aga = Math.round(totalGrossDisplay * 0.3142);
+      const totalEmployerCost = totalGrossDisplay + aga;
+
+      const allmanPension = Math.round(Math.min(totalGrossDisplay, 49375) * 0.185);
+      let itp1 = 0;
+      if (totalGrossDisplay <= 49375) {
+        itp1 = totalGrossDisplay * 0.045;
+      } else {
+        itp1 = (49375 * 0.045) + ((totalGrossDisplay - 49375) * 0.30);
+      }
+      const totalPension = Math.round(allmanPension + itp1);
+
+      document.getElementById("center-netto").textContent = `${Math.round(netSalary).toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-totalkostnad").textContent = `${Math.round(totalEmployerCost).toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-brutto").textContent = `${Math.round(totalGrossDisplay).toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-pension").textContent = `${totalPension.toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-skatt").textContent = `-${totalTax.toLocaleString('sv-SE')} kr`;
+
+      renderDonutChart(Math.max(0, netSalary), Math.max(0, totalTax), Math.max(0, aga), Math.max(0, totalPension));
+    }
+
+    function updateItem(sIdx, iIdx, key, val, isRateChange) {
+      const users = getUsers();
+      const item = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
+      
+      const numVal = parseFloat(val) || 0;
+      item[key] = (key === 'name') ? val : numVal;
+      saveUsers(users);
+
+      if (item.isBase && isRateChange) {
+        recalcAllDivisors(numVal);
+      } else if (isRateChange && item.formulaDiv) {
+        delete item.formulaDiv;
+        saveUsers(users);
+      }
+
+      updateCalculationsOnly();
+    }
+
+    function addItem(sIdx) {
+      saveUndoState();
+      const users = getUsers();
+      users[currentUser].months[currentMonthKey].sections[sIdx].items.push({ 
+        name: "Ny post", 
+        qty: 1, 
+        rate: 0 
+      });
+      saveUsers(users);
+      render();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedUser = localStorage.getItem("salary_app_active_user");
+      const users = getUsers();
+      if (savedUser && users[savedUser]) {
+        loginUser(savedUser);
+      } else if (Object.keys(users).length === 1) {
+        // Om det bara finns ett konto sparat lokalt på maskinen, logga in automatiskt direkt
+        loginUser(Object.keys(users)[0]);
+      }
+    });
+  </script>
+</body>
+</html>
