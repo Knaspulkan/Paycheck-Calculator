@@ -15,11 +15,11 @@
     :root {
       --bg: #0b1120;
       --card: #182234;
-      --card-inner: #131c2d;
       --border: #2c3a50;
       --text: #f8fafc;
       --muted: #94a3b8;
       --accent: #10b981;
+      --accent-hover: #059669;
       --tax-color: #ef4444;
       --aga-color: #3b82f6;
       --pension-color: #a855f7;
@@ -29,6 +29,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 12px; padding-bottom: 70px; }
     
+    .container { max-width: 1050px; margin: 0 auto; }
+
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
       -webkit-appearance: none; 
@@ -46,7 +48,7 @@
     .auth-btn { width: 100%; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 7px; font-weight: 600; cursor: pointer; margin-top: 6px; }
     .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
     
-    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .user-info { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
     .btn-small { background: #243046; color: var(--text); border: none; padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
     .btn-small:hover { background: #334155; }
@@ -61,10 +63,10 @@
     .month-controls { display: flex; gap: 8px; align-items: center; flex: 1; }
     .btn-month { background: var(--accent); color: white; border: none; padding: 7px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
-    .donut-wrapper { position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px; }
+    .donut-wrapper { position: relative; width: 145px; height: 145px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
-    .donut-inner-text small { display: block; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .donut-inner-text small { display: block; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
     .donut-inner-text strong { display: block; font-size: 1.05rem; color: var(--accent); font-weight: 800; line-height: 1.15; margin-top: 2px; }
 
     .stacked-metrics { display: flex; flex-direction: column; gap: 6px; min-width: 220px; flex: 1; max-width: 420px; }
@@ -81,235 +83,177 @@
     .settings-panel label { color: var(--muted); margin-right: 4px; }
     
     .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; overflow: hidden; }
-    .section-header { padding: 9px 12px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.3px; }
+    .section-header { padding: 9px 12px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.88rem; font-weight: 700; }
+
+    /* --- SKOTTSÄKER TABELL-LAYOUT (Fungerar på alla skärmar) --- */
+    .table-scroll-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-grid {
+      min-width: 780px;
+      width: 100%;
+    }
+    .row-grid {
+      display: grid;
+      grid-template-columns: 24px 28px 115px minmax(160px, 1fr) 55px 85px 95px 100px 28px;
+      gap: 6px;
+      padding: 6px 10px;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      background: var(--card);
+    }
+    .row-header {
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      background: rgba(0,0,0,0.2);
+    }
     
-    input, select { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; width: 100%; outline: none; }
+    input, select { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 5px 6px; font-size: 0.82rem; width: 100%; outline: none; }
     input:focus, select:focus { border-color: var(--accent); }
     input[type="number"] { text-align: right; }
-    input[type="date"] { font-size: 0.75rem; padding: 5px; color-scheme: dark; }
+    input[type="date"] { font-size: 0.72rem; padding: 4px; color-scheme: dark; }
 
-    .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; line-height: 1; padding: 6px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .col-sum { text-align: right; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+    
+    .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
     .btn-action:hover { color: var(--text); background: rgba(255,255,255,0.08); }
     .btn-action.btn-del:hover { color: var(--danger); }
-    .drag-handle { color: var(--muted); cursor: grab; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; padding: 4px 6px; }
     
-    .btn-add { font-size: 0.8rem; color: var(--accent); padding: 10px 14px; font-weight: 600; width: 100%; text-align: left; background: none; border: none; cursor: pointer; }
+    .drag-handle { color: var(--muted); cursor: grab; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; padding: 2px; }
+    .row-grid.dragging { opacity: 0.35; background: rgba(255, 255, 255, 0.05); }
+    .row-grid.drag-over-top { border-top: 2px solid var(--accent); }
+    .row-grid.drag-over-bottom { border-bottom: 2px solid var(--accent); }
+
+    .btn-add { font-size: 0.78rem; color: var(--accent); padding: 9px 12px; font-weight: 600; width: 100%; text-align: left; background: none; border: none; cursor: pointer; }
     .btn-add:hover { background: rgba(16,185,129,0.05); }
+
     .hidden { display: none !important; }
-
-    /* --- DESKTOP VY (Bredd > 650px) --- */
-    @media (min-width: 651px) {
-      .row-header { 
-        display: grid; 
-        grid-template-columns: 24px 28px 110px minmax(130px, 1fr) 55px 85px 95px 95px 28px; 
-        gap: 6px; 
-        padding: 6px 10px; 
-        font-size: 0.68rem; 
-        color: var(--muted); 
-        text-transform: uppercase; 
-        font-weight: 600; 
-        border-bottom: 1px solid rgba(255,255,255,0.04);
-      }
-      .row { 
-        display: grid; 
-        grid-template-columns: 24px 28px 110px minmax(130px, 1fr) 55px 85px 95px 95px 28px; 
-        gap: 6px; 
-        padding: 6px 10px; 
-        align-items: center; 
-        border-bottom: 1px solid rgba(255,255,255,0.035); 
-        background: var(--card); 
-      }
-      .col-sum { text-align: right; font-weight: 700; font-size: 0.85rem; }
-      .field-label { display: none; }
-    }
-
-    /* --- MOBIL VY (Kompakta rader / kort) --- */
-    @media (max-width: 650px) {
-      .row-header { display: none !important; }
-      .row {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding: 10px;
-        background: var(--card-inner);
-        border-radius: 8px;
-        margin: 8px 10px;
-        border: 1px solid var(--border);
-      }
-      .mobile-top-line {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .mobile-top-line .desc-input {
-        flex: 1;
-        font-weight: 600;
-      }
-      .mobile-mid-line {
-        display: flex;
-        gap: 8px;
-      }
-      .mobile-mid-line input[type="date"] {
-        flex: 1.2;
-      }
-      .mobile-mid-line select {
-        flex: 1;
-      }
-      .mobile-bottom-line {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(0,0,0,0.25);
-        padding: 6px 8px;
-        border-radius: 6px;
-      }
-      .math-box {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        flex: 1;
-      }
-      .math-box input {
-        width: 100%;
-      }
-      .math-symbol {
-        color: var(--muted);
-        font-size: 0.8rem;
-        font-weight: bold;
-      }
-      .col-sum {
-        font-weight: 800;
-        font-size: 0.92rem;
-        color: var(--text);
-        white-space: nowrap;
-        text-align: right;
-        min-width: 85px;
-      }
-    }
-
-    .row.dragging { opacity: 0.4; }
-    .row.drag-over-top { border-top: 2px solid var(--accent); }
-    .row.drag-over-bottom { border-bottom: 2px solid var(--accent); }
   </style>
 </head>
 <body>
 
-  <div id="authView" class="auth-wrap">
-    <h2 id="authTitle">Logga in</h2>
-    <div class="auth-field">
-      <label>Användarnamn</label>
-      <input type="text" id="usernameInput" placeholder="Användarnamn" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
-    </div>
-    <div class="auth-field">
-      <label>Lösenord</label>
-      <input type="password" id="passwordInput" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
-    </div>
-    <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
-    <div class="auth-switch" id="authToggleText" onclick="toggleAuthMode()">Inget konto? Skapa användare här</div>
-  </div>
-
-  <div id="appView" class="hidden">
-    <div class="app-header">
-      <h1 style="font-size: 1.15rem;">Lönekalkylator</h1>
-      <div class="user-info">
-        <span id="currentUserLabel"></span>
-        <button class="btn-small" onclick="logout()">Logga ut</button>
+  <div class="container">
+    <div id="authView" class="auth-wrap">
+      <h2 id="authTitle">Logga in</h2>
+      <div class="auth-field">
+        <label>Användarnamn</label>
+        <input type="text" id="usernameInput" placeholder="Användarnamn" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
+      <div class="auth-field">
+        <label>Lösenord</label>
+        <input type="password" id="passwordInput" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
+      </div>
+      <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
+      <div class="auth-switch" id="authToggleText" onclick="toggleAuthMode()">Inget konto? Skapa användare här</div>
     </div>
 
-    <div class="backup-bar">
-      <div class="backup-row">
-        <span>Min säkerhetskopia</span>
-        <div class="backup-actions">
-          <button class="btn-small" onclick="exportUserData()">Spara</button>
-          <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ</button>
-          <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importUserData(event)">
-        </div>
-      </div>
-      <div class="backup-row" id="adminBackupRow" style="display:none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-        <span style="color: #818cf8; font-weight: 600;">Admin: Hela databasen</span>
-        <div class="backup-actions">
-          <button class="btn-small btn-admin" onclick="exportAllUsers()">Exportera alla</button>
-          <button class="btn-small btn-admin" onclick="document.getElementById('adminImportFileInput').click()">Importera alla</button>
-          <input type="file" id="adminImportFileInput" accept=".json" style="display:none" onchange="importAllUsers(event)">
-        </div>
-      </div>
-    </div>
-
-    <div class="month-bar">
-      <div class="month-controls">
-        <label for="monthSelect" style="font-size: 0.78rem; color: var(--muted);">Månad:</label>
-        <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 130px;"></select>
-      </div>
-      <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
-    </div>
-
-    <div class="settings-panel">
-      <div class="settings-row">
-        <div style="flex: 1; min-width: 200px; display:flex; gap: 6px; align-items:center;">
-          <label>Avtal:</label>
-          <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
-            <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
-            <option value="livs">Livsmedelsavtalet (Livs)</option>
-            <option value="teknik_metall">Teknikavtalet (IF Metall)</option>
-            <option value="handels">Handels (Butik & Lager)</option>
-            <option value="el">Installationsavtalet (Elektrikerna)</option>
-            <option value="custom">Anpassad / Egen</option>
-          </select>
-          <button class="btn-small" onclick="forceResetToAgreement()" title="Läs in mallens rader">Återställ</button>
-        </div>
-      </div>
-      <div class="settings-row">
-        <div>
-          <label>Skattetabell:</label>
-          <select id="taxTable" onchange="updateTaxSetting('taxTable', this.value)" style="width: auto;">
-            <option value="33" selected>Tabell 33</option>
-            <option value="31">Tabell 31</option>
-            <option value="32">Tabell 32</option>
-            <option value="34">Tabell 34</option>
-          </select>
-        </div>
-        <div>
-          <label>Engångsskatt (%):</label>
-          <input type="number" id="oneTimeTaxRate" value="54" style="width: 55px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-center">
-      <div class="donut-wrapper">
-        <svg id="donutChart" width="140" height="140" viewBox="0 0 42 42"></svg>
-        <div class="donut-inner-text">
-          <small>Nettolön</small>
-          <strong id="center-netto">0 kr</strong>
+    <div id="appView" class="hidden">
+      <div class="app-header">
+        <h1 style="font-size: 1.15rem;">Lönekalkylator</h1>
+        <div class="user-info">
+          <span id="currentUserLabel"></span>
+          <button class="btn-small" onclick="logout()">Logga ut</button>
         </div>
       </div>
 
-      <div class="stacked-metrics">
-        <div class="metric-row aga">
-          <span class="metric-label" style="color:var(--aga-color)">Total lönekostnad</span>
-          <span class="metric-val" style="color:var(--aga-color)" id="metric-totalkostnad">0 kr</span>
+      <div class="backup-bar">
+        <div class="backup-row">
+          <span>Min säkerhetskopia</span>
+          <div class="backup-actions">
+            <button class="btn-small" onclick="exportUserData()">Spara</button>
+            <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importUserData(event)">
+          </div>
         </div>
-        <div class="metric-row brutto">
-          <span class="metric-label">Bruttolön</span>
-          <span class="metric-val" id="metric-brutto">0 kr</span>
-        </div>
-        <div class="metric-row pension">
-          <span class="metric-label" style="color:var(--pension-color)">Pensionsavsättning</span>
-          <span class="metric-val" style="color:var(--pension-color)" id="metric-pension">0 kr</span>
-        </div>
-        <div class="metric-row skatt">
-          <span class="metric-label" style="color:var(--tax-color)">Preliminärskatt</span>
-          <span class="metric-val" style="color:var(--tax-color)" id="metric-skatt">0 kr</span>
+        <div class="backup-row" id="adminBackupRow" style="display:none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+          <span style="color: #818cf8; font-weight: 600;">Admin: Hela databasen</span>
+          <div class="backup-actions">
+            <button class="btn-small btn-admin" onclick="exportAllUsers()">Exportera alla</button>
+            <button class="btn-small btn-admin" onclick="document.getElementById('adminImportFileInput').click()">Importera alla</button>
+            <input type="file" id="adminImportFileInput" accept=".json" style="display:none" onchange="importAllUsers(event)">
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="sections"></div>
+      <div class="month-bar">
+        <div class="month-controls">
+          <label for="monthSelect" style="font-size: 0.78rem; color: var(--muted);">Månad:</label>
+          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 130px;"></select>
+        </div>
+        <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
+      </div>
+
+      <div class="settings-panel">
+        <div class="settings-row">
+          <div style="flex: 1; min-width: 200px; display:flex; gap: 6px; align-items:center;">
+            <label>Kollektivavtal:</label>
+            <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
+              <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
+              <option value="livs">Livsmedelsavtalet (Livs)</option>
+              <option value="teknik_metall">Teknikavtalet (IF Metall)</option>
+              <option value="handels">Handels (Butik & Lager)</option>
+              <option value="el">Installationsavtalet (Elektrikerna)</option>
+              <option value="custom">Anpassad / Egen</option>
+            </select>
+            <button class="btn-small" onclick="forceResetToAgreement()" title="Läs in mallens rader på nytt">Återställ mall</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div>
+            <label>Skattetabell:</label>
+            <select id="taxTable" onchange="updateTaxSetting('taxTable', this.value)" style="width: auto;">
+              <option value="33" selected>Tabell 33</option>
+              <option value="31">Tabell 31</option>
+              <option value="32">Tabell 32</option>
+              <option value="34">Tabell 34</option>
+            </select>
+          </div>
+          <div>
+            <label>Engångsskatt (%):</label>
+            <input type="number" id="oneTimeTaxRate" value="54" style="width: 55px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-center">
+        <div class="donut-wrapper">
+          <svg id="donutChart" width="145" height="145" viewBox="0 0 42 42"></svg>
+          <div class="donut-inner-text">
+            <small>Nettolön</small>
+            <strong id="center-netto">0 kr</strong>
+          </div>
+        </div>
+
+        <div class="stacked-metrics">
+          <div class="metric-row aga">
+            <span class="metric-label" style="color:var(--aga-color)">Total lönekostnad</span>
+            <span class="metric-val" style="color:var(--aga-color)" id="metric-totalkostnad">0 kr</span>
+          </div>
+          <div class="metric-row brutto">
+            <span class="metric-label">Bruttolön</span>
+            <span class="metric-val" id="metric-brutto">0 kr</span>
+          </div>
+          <div class="metric-row pension">
+            <span class="metric-label" style="color:var(--pension-color)">Pensionsavsättning</span>
+            <span class="metric-val" style="color:var(--pension-color)" id="metric-pension">0 kr</span>
+          </div>
+          <div class="metric-row skatt">
+            <span class="metric-label" style="color:var(--tax-color)">Preliminärskatt</span>
+            <span class="metric-val" style="color:var(--tax-color)" id="metric-skatt">0 kr</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sections"></div>
+    </div>
   </div>
 
   <script>
-    // PWA registrering
+    // Inline PWA Manifest & Service Worker
     (function setupPWA() {
       const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><rect width="512" height="512" rx="100" fill="#0b1120"/><circle cx="256" cy="256" r="160" fill="none" stroke="#10b981" stroke-width="36"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="#f8fafc" font-size="140" font-family="-apple-system, sans-serif" font-weight="bold">kr</text></svg>`;
       const iconUrl = 'data:image/svg+xml;base64,' + btoa(iconSvg);
@@ -331,7 +275,7 @@
 
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v2';
+          const CACHE_NAME = 'loneapp-cache-v3';
           self.addEventListener('install', e => {
             e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll([self.location.href])));
             self.skipWaiting();
@@ -346,7 +290,7 @@
       }
     })();
 
-    // Skattetabell 33
+    // Skatteberäkning Tabell 33
     function getSkatteverketTabell33(monthlyIncome) {
       if (monthlyIncome <= 0) return 0;
       const annual = monthlyIncome * 12;
@@ -785,18 +729,20 @@
 
         let html = `
           <div class="section-header">${sec.title}</div>
-          <div class="row-header">
-            <div></div>
-            <div></div>
-            <div>Datum</div>
-            <div>Beskrivning</div>
-            <div style="text-align:right">Antal</div>
-            <div style="text-align:right">Á-pris</div>
-            <div style="text-align:center">Skatteform</div>
-            <div style="text-align:right">Summa</div>
-            <div></div>
-          </div>
-          <div class="rows-container" id="section-rows-${sIdx}">
+          <div class="table-scroll-wrap">
+            <div class="table-grid">
+              <div class="row-grid row-header">
+                <div></div>
+                <div></div>
+                <div>Datum</div>
+                <div>Beskrivning</div>
+                <div style="text-align:right">Antal</div>
+                <div style="text-align:right">Á-pris</div>
+                <div style="text-align:center">Skatteform</div>
+                <div style="text-align:right">Summa</div>
+                <div></div>
+              </div>
+              <div id="section-rows-${sIdx}">
         `;
 
         sec.items.forEach((item, iIdx) => {
@@ -815,7 +761,7 @@
           }
 
           html += `
-            <div class="row" 
+            <div class="row-grid" 
                  id="row-${sIdx}-${iIdx}" 
                  draggable="true"
                  ondragstart="handleDragStart(event, ${sIdx}, ${iIdx})"
@@ -823,41 +769,29 @@
                  ondragleave="handleDragLeave(event)"
                  ondrop="handleDrop(event, ${sIdx}, ${iIdx})"
                  ondragend="handleDragEnd(event)">
-              
-              <!-- Rad 1 (Mobil): Beskrivning och åtgärder -->
-              <div class="mobile-top-line">
-                <div class="drag-handle" 
-                     title="Dra för att flytta"
-                     ontouchstart="handleTouchStart(event, ${sIdx}, ${iIdx})"
-                     ontouchmove="handleTouchMove(event)"
-                     ontouchend="handleTouchEnd(event)">⠿</div>
-                <button class="btn-action" title="Kopiera rad" onclick="duplicateItem(${sIdx}, ${iIdx})">⎘</button>
-                <input class="desc-input" type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)">
-                <button class="btn-action btn-del" title="Ta bort rad" onclick="deleteItem(${sIdx}, ${iIdx})">&times;</button>
-              </div>
-
-              <!-- Rad 2 (Mobil): Datum & Skatteform -->
-              <div class="mobile-mid-line">
-                <input type="date" value="${item.date || ''}" min="${minDate}" max="${maxDate}" oninput="updateItem(${sIdx}, ${iIdx}, 'date', this.value, false)">
-                ${taxTypeSelect}
-              </div>
-
-              <!-- Rad 3 (Mobil): Antal x Á-pris = Summa -->
-              <div class="mobile-bottom-line">
-                <div class="math-box">
-                  <input type="number" step="any" value="${item.qty}" placeholder="Antal" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)">
-                  <span class="math-symbol">&times;</span>
-                  <input type="number" step="any" value="${item.rate}" placeholder="Á-pris" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)">
-                  <span class="math-symbol">=</span>
-                </div>
-                <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr</div>
-              </div>
-
+              <div class="drag-handle" 
+                   title="Dra för att flytta"
+                   ontouchstart="handleTouchStart(event, ${sIdx}, ${iIdx})"
+                   ontouchmove="handleTouchMove(event)"
+                   ontouchend="handleTouchEnd(event)">⠿</div>
+              <button class="btn-action" title="Kopiera rad" onclick="duplicateItem(${sIdx}, ${iIdx})">⎘</button>
+              <div><input type="date" value="${item.date || ''}" min="${minDate}" max="${maxDate}" oninput="updateItem(${sIdx}, ${iIdx}, 'date', this.value, false)"></div>
+              <div><input type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
+              <div><input type="number" step="any" value="${item.qty}" placeholder="Antal" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
+              <div><input type="number" step="any" value="${item.rate}" placeholder="Á-pris" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
+              <div>${taxTypeSelect}</div>
+              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr</div>
+              <button class="btn-action btn-del" title="Ta bort rad" onclick="deleteItem(${sIdx}, ${iIdx})">&times;</button>
             </div>
           `;
         });
 
-        html += `</div><button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>`;
+        html += `
+              </div>
+            </div>
+          </div>
+          <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
+        `;
         card.innerHTML = html;
         container.appendChild(card);
       });
@@ -1014,7 +948,7 @@
     }
 
     function handleDragEnd() {
-      document.querySelectorAll('.row').forEach(r => {
+      document.querySelectorAll('.row-grid').forEach(r => {
         r.classList.remove('dragging', 'drag-over-top', 'drag-over-bottom');
       });
       draggedData = null;
@@ -1028,12 +962,11 @@
 
     function handleTouchMove(e) {
       if (!touchData) return;
-      e.preventDefault();
       const touch = e.touches[0];
       const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-      const row = targetEl ? targetEl.closest('.row') : null;
+      const row = targetEl ? targetEl.closest('.row-grid') : null;
 
-      document.querySelectorAll('.row').forEach(r => r.classList.remove('drag-over-top', 'drag-over-bottom'));
+      document.querySelectorAll('.row-grid').forEach(r => r.classList.remove('drag-over-top', 'drag-over-bottom'));
       if (row && row.id && row.id.startsWith(`row-${touchData.sIdx}-`)) {
         const rect = row.getBoundingClientRect();
         if (touch.clientY < rect.top + rect.height / 2) {
@@ -1048,9 +981,9 @@
       if (!touchData) return;
       const touch = e.changedTouches[0];
       const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-      const row = targetEl ? targetEl.closest('.row') : null;
+      const row = targetEl ? targetEl.closest('.row-grid') : null;
 
-      document.querySelectorAll('.row').forEach(r => r.classList.remove('drag-over-top', 'drag-over-bottom'));
+      document.querySelectorAll('.row-grid').forEach(r => r.classList.remove('drag-over-top', 'drag-over-bottom'));
       if (row && row.id && row.id.startsWith(`row-${touchData.sIdx}-`)) {
         const parts = row.id.split('-');
         const targetIIdx = parseInt(parts[2], 10);
