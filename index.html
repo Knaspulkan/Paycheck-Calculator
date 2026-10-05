@@ -26,7 +26,7 @@
       --input-bg: #0d1527;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 8px; padding-bottom: 60px; }
+    body { background-color: var(--bg); color: var(--text); padding: 4px; padding-bottom: 60px; }
     
     .container { max-width: 900px; margin: 0 auto; }
 
@@ -47,60 +47,61 @@
     .auth-btn { width: 100%; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 7px; font-weight: 600; cursor: pointer; margin-top: 6px; }
     .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
     
-    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .user-info { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
-    .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
+    .app-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px; margin-bottom: 6px; }
+    .user-info { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+    .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
     .btn-small:hover { background: #334155; }
     .btn-admin { background: #6366f1; }
     
-    .backup-bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 8px; padding: 7px 10px; }
+    .backup-bar { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 6px; padding: 6px 8px; }
     .backup-row { display: flex; justify-content: space-between; align-items: center; }
     .backup-bar span { font-size: 0.72rem; color: var(--muted); }
-    .backup-actions { display: flex; gap: 6px; }
+    .backup-actions { display: flex; gap: 4px; }
 
-    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; }
     .month-controls { display: flex; gap: 6px; align-items: center; flex: 1; }
-    .btn-month { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .btn-month { background: var(--accent); color: white; border: none; padding: 5px 9px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }
-    .donut-wrapper { position: relative; width: 125px; height: 125px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+    .donut-wrapper { position: relative; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
-    .donut-inner-text small { display: block; font-size: 0.62rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
-    .donut-inner-text strong { display: block; font-size: 0.98rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; }
+    .donut-inner-text small { display: block; font-size: 0.58rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .donut-inner-text strong { display: block; font-size: 0.92rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; }
 
-    .stacked-metrics { display: flex; flex-direction: column; gap: 5px; min-width: 200px; flex: 1; max-width: 420px; }
-    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; background: rgba(0,0,0,0.2); border-radius: 5px; border-left: 3px solid transparent; }
+    .stacked-metrics { display: flex; flex-direction: column; gap: 4px; min-width: 190px; flex: 1; max-width: 420px; }
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 7px; background: rgba(0,0,0,0.2); border-radius: 4px; border-left: 3px solid transparent; }
     .metric-row.aga { border-color: var(--aga-color); }
     .metric-row.brutto { border-color: var(--muted); }
     .metric-row.pension { border-color: var(--pension-color); }
     .metric-row.skatt { border-color: var(--tax-color); }
-    .metric-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 600; }
-    .metric-val { font-size: 0.82rem; font-weight: 700; }
+    .metric-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+    .metric-val { font-size: 0.8rem; font-weight: 700; }
 
-    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; }
-    .settings-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-    .settings-panel label { color: var(--muted); margin-right: 4px; }
+    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; }
+    .settings-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .settings-panel label { color: var(--muted); margin-right: 2px; }
     
-    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
-    .section-header { padding: 7px 10px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.82rem; font-weight: 700; }
+    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
+    .section-header { padding: 6px 8px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; }
 
-    /* --- KOMPAKT EN-RADS-LAYOUT FÖR ALLA SKÄRMAR --- */
+    /* --- SLIMMAT OCH RYMLIGT RUTNÄT --- */
     .row-grid {
       display: grid;
-      grid-template-columns: 18px 20px minmax(90px, 1fr) 38px 60px 26px 72px 18px;
-      gap: 4px;
-      padding: 5px 6px;
+      /* Drag(16px) | Beskrivning(1fr) | Ant(34px) | Á-pris(56px) | Sk(22px) | Summa(62px) | Ta bort(16px) */
+      grid-template-columns: 16px minmax(90px, 1fr) 34px 56px 22px 62px 16px;
+      gap: 3px;
+      padding: 4px 6px;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.035);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
       background: var(--card);
     }
     .row-header {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       color: var(--muted);
       text-transform: uppercase;
       font-weight: 700;
       background: rgba(0,0,0,0.25);
-      padding: 4px 6px;
+      padding: 3px 6px;
     }
 
     input, select { 
@@ -108,7 +109,7 @@
       border: 1px solid var(--border); 
       color: var(--text); 
       border-radius: 4px; 
-      padding: 5px 4px; 
+      padding: 5px 3px; 
       font-size: 0.78rem; 
       width: 100%; 
       outline: none; 
@@ -117,38 +118,39 @@
     input:focus { border-color: var(--accent); }
     input[type="number"] { text-align: right; }
 
-    /* Kompakt Skatteknapp */
+    /* Super-kompakt Skatteknapp */
     .btn-tax-toggle {
-      width: 26px;
-      height: 26px;
-      border-radius: 4px;
+      width: 22px;
+      height: 24px;
+      border-radius: 3px;
       border: 1px solid transparent;
       font-weight: 800;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
     }
-    .tax-table { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
-    .tax-onetime { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
-    .tax-benefit { background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.4); }
+    .tax-table { background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
+    .tax-onetime { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
+    .tax-benefit { background: rgba(168, 85, 247, 0.2); color: #c084fc; border-color: rgba(168, 85, 247, 0.4); }
     .tax-none { background: transparent; border: none; cursor: default; }
 
-    .col-sum { text-align: right; font-weight: 700; font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .col-sum { text-align: right; font-weight: 700; font-size: 0.76rem; white-space: nowrap; overflow: hidden; }
     
     .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 2px; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
-    .btn-action:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+    .btn-action:hover { color: var(--text); }
     .btn-action.btn-del:hover { color: var(--danger); }
     
-    .drag-handle { color: var(--muted); cursor: grab; font-size: 1rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; padding: 1px; }
+    .drag-handle { color: var(--muted); cursor: grab; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; }
     .row-grid.dragging { opacity: 0.35; background: rgba(255, 255, 255, 0.05); }
     .row-grid.drag-over-top { border-top: 2px solid var(--accent); }
     .row-grid.drag-over-bottom { border-bottom: 2px solid var(--accent); }
 
-    .btn-add { font-size: 0.75rem; color: var(--accent); padding: 8px 10px; font-weight: 600; width: 100%; text-align: left; background: none; border: none; cursor: pointer; }
-    .btn-add:hover { background: rgba(16,185,129,0.05); }
+    .btn-add-wrap { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; }
+    .btn-add { font-size: 0.74rem; color: var(--accent); font-weight: 600; background: none; border: none; cursor: pointer; padding: 4px; }
+    .btn-add:hover { text-decoration: underline; }
 
     .hidden { display: none !important; }
   </style>
@@ -172,7 +174,7 @@
 
     <div id="appView" class="hidden">
       <div class="app-header">
-        <h1 style="font-size: 1.1rem;">Lönekalkylator</h1>
+        <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
         <div class="user-info">
           <span id="currentUserLabel"></span>
           <button class="btn-small" onclick="logout()">Logga ut</button>
@@ -188,7 +190,7 @@
             <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importUserData(event)">
           </div>
         </div>
-        <div class="backup-row" id="adminBackupRow" style="display:none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+        <div class="backup-row" id="adminBackupRow" style="display:none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px;">
           <span style="color: #818cf8; font-weight: 600;">Admin: Hela databasen</span>
           <div class="backup-actions">
             <button class="btn-small btn-admin" onclick="exportAllUsers()">Exportera alla</button>
@@ -200,15 +202,15 @@
 
       <div class="month-bar">
         <div class="month-controls">
-          <label for="monthSelect" style="font-size: 0.78rem; color: var(--muted);">Månad:</label>
-          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 120px;"></select>
+          <label for="monthSelect" style="font-size: 0.76rem; color: var(--muted);">Månad:</label>
+          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 110px;"></select>
         </div>
         <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
       </div>
 
       <div class="settings-panel">
         <div class="settings-row">
-          <div style="flex: 1; min-width: 200px; display:flex; gap: 6px; align-items:center;">
+          <div style="flex: 1; min-width: 190px; display:flex; gap: 4px; align-items:center;">
             <label>Avtal:</label>
             <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
               <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
@@ -233,14 +235,14 @@
           </div>
           <div>
             <label>Engångsskatt (%):</label>
-            <input type="number" id="oneTimeTaxRate" value="54" style="width: 50px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
+            <input type="number" id="oneTimeTaxRate" value="54" style="width: 48px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
           </div>
         </div>
       </div>
 
       <div class="dashboard-center">
         <div class="donut-wrapper">
-          <svg id="donutChart" width="125" height="125" viewBox="0 0 42 42"></svg>
+          <svg id="donutChart" width="110" height="110" viewBox="0 0 42 42"></svg>
           <div class="donut-inner-text">
             <small>Nettolön</small>
             <strong id="center-netto">0 kr</strong>
@@ -294,7 +296,7 @@
 
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v4';
+          const CACHE_NAME = 'loneapp-cache-v5';
           self.addEventListener('install', e => {
             e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll([self.location.href])));
             self.skipWaiting();
@@ -351,14 +353,14 @@
             type: "income",
             items: [
               { name: "Månadslön", qty: 1, rate: 46332, isBase: true, taxType: "table" },
-              { name: "Beredskapsersättning Fast", qty: 1, rate: 6097, taxType: "table" },
-              { name: "Omvandling komp 2,0", qty: 15.5, rate: 728.18, taxType: "onetime" },
+              { name: "Beredskap Fast", qty: 1, rate: 6097, taxType: "table" },
+              { name: "Omvandl komp 2.0", qty: 15.5, rate: 728.18, taxType: "onetime" },
               { name: "Restid vardag", qty: 2, rate: 218.45, formulaDiv: 240, taxType: "table" },
               { name: "Restid helg", qty: 2, rate: 275.94, formulaDiv: 190, taxType: "table" },
               { name: "Förskjuten tid 2/400", qty: 16, rate: 131.07, formulaDiv: 400, taxType: "table" },
               { name: "Förskjuten tid 3/300", qty: 5, rate: 174.76, formulaDiv: 300, taxType: "table" },
               { name: "Rörl beredskap/v", qty: 1, rate: 5205, taxType: "table" },
-              { name: "Matkupong förmån", qty: 1, rate: 62, taxType: "benefit" }
+              { name: "Matkup förmån", qty: 1, rate: 62, taxType: "benefit" }
             ]
           },
           {
@@ -366,9 +368,9 @@
             title: "Avdrag före skatt",
             type: "deduction",
             items: [
-              { name: "Tjänstledighet [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
-              { name: "Sjukavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
-              { name: "VAB timavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 }
+              { name: "Tjänstledighet", qty: 0, rate: 265, formulaDiv: 175 },
+              { name: "Sjukavdrag", qty: 0, rate: 265, formulaDiv: 175 },
+              { name: "VAB avdrag", qty: 0, rate: 265, formulaDiv: 175 }
             ]
           },
           {
@@ -722,7 +724,6 @@
       `;
     }
 
-    // Växla skatteform med ett tryck (T -> % -> F -> T)
     function toggleTaxType(sIdx, iIdx) {
       const users = getUsers();
       const item = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
@@ -734,6 +735,11 @@
 
       saveUsers(users);
       render();
+    }
+
+    function formatKr(val) {
+      const rounded = Math.round(val);
+      return rounded.toLocaleString('sv-SE') + " kr";
     }
 
     function render() {
@@ -752,7 +758,6 @@
           <div class="section-header">${sec.title}</div>
           <div class="row-grid row-header">
             <div></div>
-            <div></div>
             <div>Beskrivning</div>
             <div style="text-align:right">Ant</div>
             <div style="text-align:right">Á-pris</div>
@@ -764,7 +769,7 @@
         `;
 
         sec.items.forEach((item, iIdx) => {
-          const sum = Math.round(((item.qty || 0) * (item.rate || 0)) * 100) / 100;
+          const sum = (item.qty || 0) * (item.rate || 0);
           const taxType = item.taxType || (sec.type === "income" ? "table" : "none");
 
           let taxBtn = `<div></div>`;
@@ -802,12 +807,11 @@
                    ontouchstart="handleTouchStart(event, ${sIdx}, ${iIdx})"
                    ontouchmove="handleTouchMove(event)"
                    ontouchend="handleTouchEnd(event)">⠿</div>
-              <button class="btn-action" title="Kopiera rad" onclick="duplicateItem(${sIdx}, ${iIdx})">⎘</button>
               <div><input type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
               <div><input type="number" step="any" value="${item.qty}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
               <div><input type="number" step="any" value="${item.rate}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
               <div style="display:flex; justify-content:center;">${taxBtn}</div>
-              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr</div>
+              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${formatKr(sum)}</div>
               <button class="btn-action btn-del" title="Ta bort rad" onclick="deleteItem(${sIdx}, ${iIdx})">&times;</button>
             </div>
           `;
@@ -815,7 +819,10 @@
 
         html += `
             </div>
-          <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
+          <div class="btn-add-wrap">
+            <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
+            <button class="btn-small" style="background:rgba(255,255,255,0.06); font-size:0.68rem;" onclick="duplicateLastItem(${sIdx})" title="Kopiera sista raden i denna sektion">⎘ Duplicera sista</button>
+          </div>
         `;
         card.innerHTML = html;
         container.appendChild(card);
@@ -840,7 +847,7 @@
 
       sections.forEach((sec, sIdx) => {
         sec.items.forEach((item, iIdx) => {
-          const sum = Math.round(((item.qty || 0) * (item.rate || 0)) * 100) / 100;
+          const sum = (item.qty || 0) * (item.rate || 0);
 
           if (sec.type === "income") {
             const tType = item.taxType || "table";
@@ -860,7 +867,7 @@
           }
 
           const sumEl = document.getElementById(`col-sum-${sIdx}-${iIdx}`);
-          if (sumEl) sumEl.textContent = `${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr`;
+          if (sumEl) sumEl.textContent = formatKr(sum);
         });
       });
 
@@ -883,9 +890,9 @@
       }
       const totalPension = Math.round(allmanPension + itp1);
 
-      document.getElementById("center-netto").textContent = `${netSalary.toLocaleString('sv-SE', {minimumFractionDigits: 0, maximumFractionDigits: 0})} kr`;
-      document.getElementById("metric-totalkostnad").textContent = `${totalEmployerCost.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr`;
-      document.getElementById("metric-brutto").textContent = `${totalGrossDisplay.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr`;
+      document.getElementById("center-netto").textContent = `${Math.round(netSalary).toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-totalkostnad").textContent = `${Math.round(totalEmployerCost).toLocaleString('sv-SE')} kr`;
+      document.getElementById("metric-brutto").textContent = `${Math.round(totalGrossDisplay).toLocaleString('sv-SE')} kr`;
       document.getElementById("metric-pension").textContent = `${totalPension.toLocaleString('sv-SE')} kr`;
       document.getElementById("metric-skatt").textContent = `-${totalTax.toLocaleString('sv-SE')} kr`;
 
@@ -910,11 +917,12 @@
       updateCalculationsOnly();
     }
 
-    function duplicateItem(sIdx, iIdx) {
+    function duplicateLastItem(sIdx) {
       const users = getUsers();
-      const itemToCopy = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
-      const cloned = JSON.parse(JSON.stringify(itemToCopy));
-      users[currentUser].months[currentMonthKey].sections[sIdx].items.splice(iIdx + 1, 0, cloned);
+      const items = users[currentUser].months[currentMonthKey].sections[sIdx].items;
+      if (!items.length) return;
+      const last = items[items.length - 1];
+      items.push(JSON.parse(JSON.stringify(last)));
       saveUsers(users);
       render();
     }
