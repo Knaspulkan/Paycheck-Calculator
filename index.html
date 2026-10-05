@@ -19,7 +19,6 @@
       --text: #f8fafc;
       --muted: #94a3b8;
       --accent: #10b981;
-      --accent-hover: #059669;
       --tax-color: #ef4444;
       --aga-color: #3b82f6;
       --pension-color: #a855f7;
@@ -27,9 +26,9 @@
       --input-bg: #0d1527;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 12px; padding-bottom: 70px; }
+    body { background-color: var(--bg); color: var(--text); padding: 8px; padding-bottom: 60px; }
     
-    .container { max-width: 1050px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; }
 
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
@@ -41,94 +40,114 @@
       appearance: textfield;
     }
 
-    .auth-wrap { max-width: 350px; margin: 50px auto; background: var(--card); padding: 22px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-    .auth-wrap h2 { font-size: 1.25rem; margin-bottom: 14px; text-align: center; }
+    .auth-wrap { max-width: 340px; margin: 40px auto; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .auth-wrap h2 { font-size: 1.2rem; margin-bottom: 12px; text-align: center; }
     .auth-field { margin-bottom: 10px; }
     .auth-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
     .auth-btn { width: 100%; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 7px; font-weight: 600; cursor: pointer; margin-top: 6px; }
     .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
     
-    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .user-info { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
-    .btn-small { background: #243046; color: var(--text); border: none; padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
+    .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 600; }
     .btn-small:hover { background: #334155; }
     .btn-admin { background: #6366f1; }
     
-    .backup-bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 8px; padding: 8px 10px; }
+    .backup-bar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 8px; padding: 7px 10px; }
     .backup-row { display: flex; justify-content: space-between; align-items: center; }
     .backup-bar span { font-size: 0.72rem; color: var(--muted); }
     .backup-actions { display: flex; gap: 6px; }
 
-    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .month-controls { display: flex; gap: 8px; align-items: center; flex: 1; }
-    .btn-month { background: var(--accent); color: white; border: none; padding: 7px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .month-controls { display: flex; gap: 6px; align-items: center; flex: 1; }
+    .btn-month { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.76rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px; }
-    .donut-wrapper { position: relative; width: 145px; height: 145px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }
+    .donut-wrapper { position: relative; width: 125px; height: 125px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
-    .donut-inner-text small { display: block; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-    .donut-inner-text strong { display: block; font-size: 1.05rem; color: var(--accent); font-weight: 800; line-height: 1.15; margin-top: 2px; }
+    .donut-inner-text small { display: block; font-size: 0.62rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .donut-inner-text strong { display: block; font-size: 0.98rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; }
 
-    .stacked-metrics { display: flex; flex-direction: column; gap: 6px; min-width: 220px; flex: 1; max-width: 420px; }
-    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.18); border-radius: 6px; border-left: 3px solid transparent; }
+    .stacked-metrics { display: flex; flex-direction: column; gap: 5px; min-width: 200px; flex: 1; max-width: 420px; }
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; background: rgba(0,0,0,0.2); border-radius: 5px; border-left: 3px solid transparent; }
     .metric-row.aga { border-color: var(--aga-color); }
     .metric-row.brutto { border-color: var(--muted); }
     .metric-row.pension { border-color: var(--pension-color); }
     .metric-row.skatt { border-color: var(--tax-color); }
-    .metric-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; font-weight: 600; }
-    .metric-val { font-size: 0.88rem; font-weight: 700; }
+    .metric-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 600; }
+    .metric-val { font-size: 0.82rem; font-weight: 700; }
 
-    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; }
-    .settings-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; }
+    .settings-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     .settings-panel label { color: var(--muted); margin-right: 4px; }
     
-    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 14px; overflow: hidden; }
-    .section-header { padding: 9px 12px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.88rem; font-weight: 700; }
+    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    .section-header { padding: 7px 10px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 0.82rem; font-weight: 700; }
 
-    /* --- SKOTTSÄKER TABELL-LAYOUT (Fungerar på alla skärmar) --- */
-    .table-scroll-wrap {
-      width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .table-grid {
-      min-width: 780px;
-      width: 100%;
-    }
+    /* --- KOMPAKT EN-RADS-LAYOUT FÖR ALLA SKÄRMAR --- */
     .row-grid {
       display: grid;
-      grid-template-columns: 24px 28px 115px minmax(160px, 1fr) 55px 85px 95px 100px 28px;
-      gap: 6px;
-      padding: 6px 10px;
+      grid-template-columns: 18px 20px minmax(90px, 1fr) 38px 60px 26px 72px 18px;
+      gap: 4px;
+      padding: 5px 6px;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.035);
       background: var(--card);
     }
     .row-header {
-      font-size: 0.68rem;
+      font-size: 0.62rem;
       color: var(--muted);
       text-transform: uppercase;
       font-weight: 700;
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.25);
+      padding: 4px 6px;
     }
-    
-    input, select { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 5px 6px; font-size: 0.82rem; width: 100%; outline: none; }
-    input:focus, select:focus { border-color: var(--accent); }
-    input[type="number"] { text-align: right; }
-    input[type="date"] { font-size: 0.72rem; padding: 4px; color-scheme: dark; }
 
-    .col-sum { text-align: right; font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+    input, select { 
+      background: var(--input-bg); 
+      border: 1px solid var(--border); 
+      color: var(--text); 
+      border-radius: 4px; 
+      padding: 5px 4px; 
+      font-size: 0.78rem; 
+      width: 100%; 
+      outline: none; 
+      min-width: 0;
+    }
+    input:focus { border-color: var(--accent); }
+    input[type="number"] { text-align: right; }
+
+    /* Kompakt Skatteknapp */
+    .btn-tax-toggle {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      font-weight: 800;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .tax-table { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.4); }
+    .tax-onetime { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4); }
+    .tax-benefit { background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.4); }
+    .tax-none { background: transparent; border: none; cursor: default; }
+
+    .col-sum { text-align: right; font-weight: 700; font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .btn-action { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 2px; border-radius: 3px; display: flex; align-items: center; justify-content: center; }
     .btn-action:hover { color: var(--text); background: rgba(255,255,255,0.08); }
     .btn-action.btn-del:hover { color: var(--danger); }
     
-    .drag-handle { color: var(--muted); cursor: grab; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; padding: 2px; }
+    .drag-handle { color: var(--muted); cursor: grab; font-size: 1rem; display: flex; align-items: center; justify-content: center; user-select: none; touch-action: none; padding: 1px; }
     .row-grid.dragging { opacity: 0.35; background: rgba(255, 255, 255, 0.05); }
     .row-grid.drag-over-top { border-top: 2px solid var(--accent); }
     .row-grid.drag-over-bottom { border-bottom: 2px solid var(--accent); }
 
-    .btn-add { font-size: 0.78rem; color: var(--accent); padding: 9px 12px; font-weight: 600; width: 100%; text-align: left; background: none; border: none; cursor: pointer; }
+    .btn-add { font-size: 0.75rem; color: var(--accent); padding: 8px 10px; font-weight: 600; width: 100%; text-align: left; background: none; border: none; cursor: pointer; }
     .btn-add:hover { background: rgba(16,185,129,0.05); }
 
     .hidden { display: none !important; }
@@ -153,7 +172,7 @@
 
     <div id="appView" class="hidden">
       <div class="app-header">
-        <h1 style="font-size: 1.15rem;">Lönekalkylator</h1>
+        <h1 style="font-size: 1.1rem;">Lönekalkylator</h1>
         <div class="user-info">
           <span id="currentUserLabel"></span>
           <button class="btn-small" onclick="logout()">Logga ut</button>
@@ -182,7 +201,7 @@
       <div class="month-bar">
         <div class="month-controls">
           <label for="monthSelect" style="font-size: 0.78rem; color: var(--muted);">Månad:</label>
-          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 130px;"></select>
+          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 120px;"></select>
         </div>
         <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
       </div>
@@ -190,7 +209,7 @@
       <div class="settings-panel">
         <div class="settings-row">
           <div style="flex: 1; min-width: 200px; display:flex; gap: 6px; align-items:center;">
-            <label>Kollektivavtal:</label>
+            <label>Avtal:</label>
             <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
               <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
               <option value="livs">Livsmedelsavtalet (Livs)</option>
@@ -199,7 +218,7 @@
               <option value="el">Installationsavtalet (Elektrikerna)</option>
               <option value="custom">Anpassad / Egen</option>
             </select>
-            <button class="btn-small" onclick="forceResetToAgreement()" title="Läs in mallens rader på nytt">Återställ mall</button>
+            <button class="btn-small" onclick="forceResetToAgreement()" title="Läs in mallens rader">Återställ</button>
           </div>
         </div>
         <div class="settings-row">
@@ -214,14 +233,14 @@
           </div>
           <div>
             <label>Engångsskatt (%):</label>
-            <input type="number" id="oneTimeTaxRate" value="54" style="width: 55px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
+            <input type="number" id="oneTimeTaxRate" value="54" style="width: 50px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
           </div>
         </div>
       </div>
 
       <div class="dashboard-center">
         <div class="donut-wrapper">
-          <svg id="donutChart" width="145" height="145" viewBox="0 0 42 42"></svg>
+          <svg id="donutChart" width="125" height="125" viewBox="0 0 42 42"></svg>
           <div class="donut-inner-text">
             <small>Nettolön</small>
             <strong id="center-netto">0 kr</strong>
@@ -253,7 +272,7 @@
   </div>
 
   <script>
-    // Inline PWA Manifest & Service Worker
+    // PWA Manifest & Service Worker
     (function setupPWA() {
       const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><rect width="512" height="512" rx="100" fill="#0b1120"/><circle cx="256" cy="256" r="160" fill="none" stroke="#10b981" stroke-width="36"/><text x="50%" y="54%" text-anchor="middle" dominant-baseline="middle" fill="#f8fafc" font-size="140" font-family="-apple-system, sans-serif" font-weight="bold">kr</text></svg>`;
       const iconUrl = 'data:image/svg+xml;base64,' + btoa(iconSvg);
@@ -275,7 +294,7 @@
 
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v3';
+          const CACHE_NAME = 'loneapp-cache-v4';
           self.addEventListener('install', e => {
             e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll([self.location.href])));
             self.skipWaiting();
@@ -331,15 +350,15 @@
             title: "Skattepliktig inkomst & tillägg",
             type: "income",
             items: [
-              { date: "2026-10-01", name: "Månadslön", qty: 1, rate: 46332, isBase: true, taxType: "table" },
-              { date: "2026-10-01", name: "Beredskapsersättning Fast", qty: 1, rate: 6097, taxType: "table" },
-              { date: "2026-10-15", name: "Omvandling av innestående komp 2,0", qty: 15.5, rate: 728.18, taxType: "onetime" },
-              { date: "2026-10-25", name: "Restid", qty: 2, rate: 218.45, formulaDiv: 240, taxType: "table" },
-              { date: "2026-10-27", name: "Restid helg", qty: 2, rate: 275.94, formulaDiv: 190, taxType: "table" },
-              { date: "2026-10-24", name: "Förskjuten tid 2/400", qty: 16, rate: 131.07, formulaDiv: 400, taxType: "table" },
-              { date: "2026-10-03", name: "Förskjuten tid 3/300", qty: 5, rate: 174.76, formulaDiv: 300, taxType: "table" },
-              { date: "2026-10-24", name: "Rörl beredskapsers/vecka", qty: 1, rate: 5205, taxType: "table" },
-              { date: "2026-10-01", name: "Matkup förmån", qty: 1, rate: 62, taxType: "benefit" }
+              { name: "Månadslön", qty: 1, rate: 46332, isBase: true, taxType: "table" },
+              { name: "Beredskapsersättning Fast", qty: 1, rate: 6097, taxType: "table" },
+              { name: "Omvandling komp 2,0", qty: 15.5, rate: 728.18, taxType: "onetime" },
+              { name: "Restid vardag", qty: 2, rate: 218.45, formulaDiv: 240, taxType: "table" },
+              { name: "Restid helg", qty: 2, rate: 275.94, formulaDiv: 190, taxType: "table" },
+              { name: "Förskjuten tid 2/400", qty: 16, rate: 131.07, formulaDiv: 400, taxType: "table" },
+              { name: "Förskjuten tid 3/300", qty: 5, rate: 174.76, formulaDiv: 300, taxType: "table" },
+              { name: "Rörl beredskap/v", qty: 1, rate: 5205, taxType: "table" },
+              { name: "Matkupong förmån", qty: 1, rate: 62, taxType: "benefit" }
             ]
           },
           {
@@ -347,9 +366,9 @@
             title: "Avdrag före skatt",
             type: "deduction",
             items: [
-              { date: "", name: "Tjänstledighet timavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
-              { date: "", name: "Sjukavdrag timme [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
-              { date: "", name: "VAB timavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 }
+              { name: "Tjänstledighet [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
+              { name: "Sjukavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 },
+              { name: "VAB timavdrag [1/175]", qty: 0, rate: 265, formulaDiv: 175 }
             ]
           },
           {
@@ -357,9 +376,9 @@
             title: "Nettojusteringar & förmåner",
             type: "net",
             items: [
-              { date: "2026-10-01", name: "Matkup avdrag", qty: 1, rate: -62 },
-              { date: "", name: "Personalköp", qty: 1, rate: -75 },
-              { date: "", name: "Personalköp", qty: 1, rate: -131 }
+              { name: "Matkupong avdrag", qty: 1, rate: -62 },
+              { name: "Personalköp", qty: 1, rate: -75 },
+              { name: "Personalköp", qty: 1, rate: -131 }
             ]
           },
           {
@@ -367,7 +386,7 @@
             title: "Externa tillägg",
             type: "external",
             items: [
-              { date: "", name: "Barnbidrag", qty: 0, rate: 1325 }
+              { name: "Barnbidrag", qty: 0, rate: 1325 }
             ]
           }
         ]
@@ -639,12 +658,6 @@
 
       const prevData = users[currentUser].months[currentMonthKey];
       const clonedSections = JSON.parse(JSON.stringify(prevData.sections));
-      
-      clonedSections.forEach(sec => {
-        sec.items.forEach(item => {
-          if (item.date) item.date = `${name}-01`;
-        });
-      });
 
       users[currentUser].months[name] = {
         taxTable: prevData.taxTable || 33,
@@ -709,6 +722,20 @@
       `;
     }
 
+    // Växla skatteform med ett tryck (T -> % -> F -> T)
+    function toggleTaxType(sIdx, iIdx) {
+      const users = getUsers();
+      const item = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
+      const current = item.taxType || "table";
+      
+      if (current === "table") item.taxType = "onetime";
+      else if (current === "onetime") item.taxType = "benefit";
+      else item.taxType = "table";
+
+      saveUsers(users);
+      render();
+    }
+
     function render() {
       const users = getUsers();
       if (!users[currentUser] || !users[currentUser].months[currentMonthKey]) return;
@@ -717,46 +744,47 @@
       const container = document.getElementById("sections");
       container.innerHTML = "";
 
-      const ym = currentMonthKey && currentMonthKey.match(/^\d{4}-\d{2}$/) ? currentMonthKey : "2026-10";
-      const [year, month] = ym.split("-").map(Number);
-      const lastDay = new Date(year, month, 0).getDate();
-      const minDate = `${ym}-01`;
-      const maxDate = `${ym}-${String(lastDay).padStart(2, '0')}`;
-
       sections.forEach((sec, sIdx) => {
         const card = document.createElement("div");
         card.className = "section-card";
 
         let html = `
           <div class="section-header">${sec.title}</div>
-          <div class="table-scroll-wrap">
-            <div class="table-grid">
-              <div class="row-grid row-header">
-                <div></div>
-                <div></div>
-                <div>Datum</div>
-                <div>Beskrivning</div>
-                <div style="text-align:right">Antal</div>
-                <div style="text-align:right">Á-pris</div>
-                <div style="text-align:center">Skatteform</div>
-                <div style="text-align:right">Summa</div>
-                <div></div>
-              </div>
-              <div id="section-rows-${sIdx}">
+          <div class="row-grid row-header">
+            <div></div>
+            <div></div>
+            <div>Beskrivning</div>
+            <div style="text-align:right">Ant</div>
+            <div style="text-align:right">Á-pris</div>
+            <div style="text-align:center">Sk</div>
+            <div style="text-align:right">Summa</div>
+            <div></div>
+          </div>
+          <div id="section-rows-${sIdx}">
         `;
 
         sec.items.forEach((item, iIdx) => {
           const sum = Math.round(((item.qty || 0) * (item.rate || 0)) * 100) / 100;
           const taxType = item.taxType || (sec.type === "income" ? "table" : "none");
 
-          let taxTypeSelect = `<div style="visibility:hidden"></div>`;
+          let taxBtn = `<div></div>`;
           if (sec.type === "income") {
-            taxTypeSelect = `
-              <select onchange="updateItemTaxType(${sIdx}, ${iIdx}, this.value)">
-                <option value="table" ${taxType === 'table' ? 'selected' : ''}>Tabell</option>
-                <option value="onetime" ${taxType === 'onetime' ? 'selected' : ''}>Engångs (54%)</option>
-                <option value="benefit" ${taxType === 'benefit' ? 'selected' : ''}>Förmån</option>
-              </select>
+            let label = "T";
+            let cls = "tax-table";
+            let title = "Tabellskatt (Tryck för att ändra)";
+
+            if (taxType === "onetime") {
+              label = "%";
+              cls = "tax-onetime";
+              title = "Engångsskatt (54%)";
+            } else if (taxType === "benefit") {
+              label = "F";
+              cls = "tax-benefit";
+              title = "Förmånsvärde";
+            }
+
+            taxBtn = `
+              <button class="btn-tax-toggle ${cls}" title="${title}" onclick="toggleTaxType(${sIdx}, ${iIdx})">${label}</button>
             `;
           }
 
@@ -775,11 +803,10 @@
                    ontouchmove="handleTouchMove(event)"
                    ontouchend="handleTouchEnd(event)">⠿</div>
               <button class="btn-action" title="Kopiera rad" onclick="duplicateItem(${sIdx}, ${iIdx})">⎘</button>
-              <div><input type="date" value="${item.date || ''}" min="${minDate}" max="${maxDate}" oninput="updateItem(${sIdx}, ${iIdx}, 'date', this.value, false)"></div>
               <div><input type="text" value="${item.name}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
-              <div><input type="number" step="any" value="${item.qty}" placeholder="Antal" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
-              <div><input type="number" step="any" value="${item.rate}" placeholder="Á-pris" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
-              <div>${taxTypeSelect}</div>
+              <div><input type="number" step="any" value="${item.qty}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
+              <div><input type="number" step="any" value="${item.rate}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
+              <div style="display:flex; justify-content:center;">${taxBtn}</div>
               <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${sum.toLocaleString('sv-SE', {minimumFractionDigits: 2, maximumFractionDigits: 2})} kr</div>
               <button class="btn-action btn-del" title="Ta bort rad" onclick="deleteItem(${sIdx}, ${iIdx})">&times;</button>
             </div>
@@ -787,9 +814,7 @@
         });
 
         html += `
-              </div>
             </div>
-          </div>
           <button class="btn-add" onclick="addItem(${sIdx})">+ Lägg till rad</button>
         `;
         card.innerHTML = html;
@@ -867,19 +892,12 @@
       renderDonutChart(Math.max(0, netSalary), Math.max(0, totalTax), Math.max(0, aga), Math.max(0, totalPension));
     }
 
-    function updateItemTaxType(sIdx, iIdx, type) {
-      const users = getUsers();
-      users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx].taxType = type;
-      saveUsers(users);
-      updateCalculationsOnly();
-    }
-
     function updateItem(sIdx, iIdx, key, val, isRateChange) {
       const users = getUsers();
       const item = users[currentUser].months[currentMonthKey].sections[sIdx].items[iIdx];
       
       const numVal = parseFloat(val) || 0;
-      item[key] = (key === 'name' || key === 'date') ? val : numVal;
+      item[key] = (key === 'name') ? val : numVal;
       saveUsers(users);
 
       if (item.isBase && isRateChange) {
@@ -962,6 +980,7 @@
 
     function handleTouchMove(e) {
       if (!touchData) return;
+      e.preventDefault();
       const touch = e.touches[0];
       const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
       const row = targetEl ? targetEl.closest('.row-grid') : null;
@@ -1001,9 +1020,7 @@
 
     function addItem(sIdx) {
       const users = getUsers();
-      const ym = currentMonthKey && currentMonthKey.match(/^\d{4}-\d{2}$/) ? currentMonthKey : "2026-10";
       users[currentUser].months[currentMonthKey].sections[sIdx].items.push({ 
-        date: `${ym}-01`, 
         name: "Ny post", 
         qty: 1, 
         rate: 0, 
