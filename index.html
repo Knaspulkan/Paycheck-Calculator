@@ -194,7 +194,7 @@
         <input type="text" id="usernameInput" value="Knaspulkan" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
       <div class="auth-field">
-        <label>Lösenord (valfritt lokalt)</label>
+        <label>Lösenord</label>
         <input type="password" id="passwordInput" placeholder="••••••••" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
       <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
@@ -313,33 +313,61 @@
   </div>
 
   <script>
-    function getSkatteverketTabell33(monthlyIncome) {
+    // Officiell formel för Skatteverkets tabell 33 (och närliggande tabeller)
+    function getSkatteverketTax(monthlyIncome, tabellNum = 33) {
       if (monthlyIncome <= 0) return 0;
-      const annual = monthlyIncome * 12;
-      const pbb = 57300;
+      
+      // Hitta intervall (Skatteverkets intervall är i steg om 200 kr)
+      const lower = Math.floor((monthlyIncome - 1) / 200) * 200 + 1;
+      const upper = lower + 199;
+      const midIncome = (lower + upper) / 2;
+      const annual = midIncome * 12;
 
+      // Parametrar för 2026
+      const pbb = 59200;
+      const tabellRate = tabellNum / 100;
+
+      // 1. Grundavdrag (GA)
       let ga = 0;
       if (annual < 0.99 * pbb) ga = 0.423 * pbb;
       else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
       else if (annual < 3.11 * pbb) ga = 0.77 * pbb;
       else if (annual < 7.88 * pbb) ga = 0.77 * pbb - 0.1 * (annual - 3.11 * pbb);
       else ga = 0.293 * pbb;
+      ga = Math.round(ga / 100) * 100;
 
+      // 2. Jobbskatteavdrag (JSA) - utan avtrappning
       let jsa = 0;
-      if (annual < 0.91 * pbb) jsa = (annual - ga) * 0.33;
-      else if (annual < 3.24 * pbb) jsa = (0.91 * pbb + 0.34 * (annual - 0.91 * pbb) - ga) * 0.33;
-      else if (annual < 8.08 * pbb) jsa = (1.702 * pbb + 0.128 * (annual - 3.24 * pbb) - ga) * 0.33;
-      else if (annual < 13.54 * pbb) jsa = (2.322 * pbb - ga) * 0.33;
-      else jsa = Math.max(0, (2.322 * pbb - ga) * 0.33 - 0.03 * (annual - 13.54 * pbb));
-      jsa = Math.max(0, jsa);
+      const pbb1 = 0.91 * pbb;
+      const pbb2 = 3.24 * pbb;
+      const pbb3 = 8.08 * pbb;
 
+      if (annual <= pbb1) {
+        jsa = 0.916 * annual * tabellRate;
+      } else if (annual <= pbb2) {
+        jsa = (0.916 * pbb1 + 0.34 * (annual - pbb1)) * tabellRate;
+      } else if (annual <= pbb3) {
+        jsa = (1.708 * pbb + 0.128 * (annual - pbb2)) * tabellRate;
+      } else {
+        // Platånivå (ingen avtrappning längre)
+        jsa = 2.328 * pbb * tabellRate;
+      }
+
+      // 3. Beskattningsbar inkomst och kommunalskatt
       const taxableAnnual = Math.max(0, annual - ga);
-      let taxAnnual = (taxableAnnual * 0.33) - jsa;
+      let taxAnnual = (taxableAnnual * tabellRate) - jsa;
 
-      const skiktgrans = 598500;
+      // 4. Skattereduktion för förvärvsinkomst
+      taxAnnual -= 1500;
+
+      // 5. Statlig inkomstskatt (skiktgräns 643 000 kr)
+      const skiktgrans = 643000;
       if (taxableAnnual > skiktgrans) {
         taxAnnual += (taxableAnnual - skiktgrans) * 0.20;
       }
+
+      // 6. Public service-avgift schablon (~1 184 kr/år)
+      taxAnnual += 1184;
 
       return Math.round(Math.max(0, taxAnnual / 12));
     }
@@ -508,47 +536,36 @@
     }
 
     function loginUser(username) {
-      try {
-        currentUser = username;
-        localStorage.setItem("salary_app_active_user", username);
-        
-        document.getElementById("authView").classList.add("hidden");
-        document.getElementById("appView").classList.remove("hidden");
-        document.getElementById("currentUserLabel").textContent = username;
-        document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
+      currentUser = username;
+      localStorage.setItem("salary_app_active_user", username);
+      
+      document.getElementById("authView").classList.add("hidden");
+      document.getElementById("appView").classList.remove("hidden");
+      document.getElementById("currentUserLabel").textContent = username;
+      document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
 
-        const users = getUsers();
-        if (!users[username]) {
-          users[username] = {
-            currentMonth: "2026-10",
-            months: {
-              "2026-10": {
-                taxTable: 33,
-                oneTimeTaxRate: 54,
-                agreement: "teknik_unionen",
-                sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
-              }
+      const users = getUsers();
+      if (!users[username]) {
+        users[username] = {
+          currentMonth: "2026-10",
+          months: {
+            "2026-10": {
+              taxTable: 33,
+              oneTimeTaxRate: 54,
+              agreement: "teknik_unionen",
+              sections: JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections))
             }
-          };
-          saveUsers(users);
-        }
-
-        const userObj = users[username];
-        const monthKeys = Object.keys(userObj.months || {}).sort();
-        currentMonthKey = userObj.currentMonth || (monthKeys.length ? monthKeys[monthKeys.length - 1] : "2026-10");
-        
-        // Återställ till den nya sektionsstrukturen om gammal data saknar badges
-        if (users[username].months[currentMonthKey]?.sections?.some(s => s.id === "taxable")) {
-          users[username].months[currentMonthKey].sections = JSON.parse(JSON.stringify(agreementTemplates.teknik_unionen.sections));
-          saveUsers(users);
-        }
-
-        populateMonthDropdown();
-        loadCurrentMonth();
-      } catch (err) {
-        console.error(err);
-        alert("Ett fel uppstod vid inloggning: " + err.message);
+          }
+        };
+        saveUsers(users);
       }
+
+      const userObj = users[username];
+      const monthKeys = Object.keys(userObj.months || {}).sort();
+      currentMonthKey = userObj.currentMonth || (monthKeys.length ? monthKeys[monthKeys.length - 1] : "2026-10");
+      
+      populateMonthDropdown();
+      loadCurrentMonth();
     }
 
     function logout() {
@@ -972,6 +989,7 @@
       const mData = users[currentUser].months[currentMonthKey];
       const sections = mData.sections || [];
       const oneTimeRate = (mData.oneTimeTaxRate !== undefined ? mData.oneTimeTaxRate : 54) / 100;
+      const selectedTaxTable = mData.taxTable || 33;
 
       let tableTaxBase = 0;
       let oneTimeTaxBase = 0;
@@ -1004,8 +1022,9 @@
         });
       });
 
+      // Skatteunderlag för tabellskatt: Fast lön + schematillägg + skattepliktig förmån - bruttoavdrag
       const finalTableBase = Math.max(0, tableTaxBase + benefitBase - preDeductions);
-      const tableTax = getSkatteverketTabell33(finalTableBase);
+      const tableTax = getSkatteverketTax(finalTableBase, selectedTaxTable);
       const oneTimeTax = Math.round(oneTimeTaxBase * oneTimeRate);
       const totalTax = tableTax + oneTimeTax;
 
@@ -1014,6 +1033,7 @@
       const aga = Math.round(totalGrossDisplay * 0.3142);
       const totalEmployerCost = totalGrossDisplay + aga;
 
+      // Pensionsgrundande lön (ITP1)
       const allmanPension = Math.round(Math.min(totalGrossDisplay, 49375) * 0.185);
       let itp1 = 0;
       if (totalGrossDisplay <= 49375) {
@@ -1068,7 +1088,6 @@
       if (savedUser && users[savedUser]) {
         loginUser(savedUser);
       } else if (Object.keys(users).length === 1) {
-        // Om det bara finns ett konto sparat lokalt på maskinen, logga in automatiskt direkt
         loginUser(Object.keys(users)[0]);
       }
     });
