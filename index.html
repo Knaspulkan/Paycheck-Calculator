@@ -1,9 +1,11 @@
+//v1.3.5
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator v1.3.2</title>
+  <title>Lönekalkylator v1.3.5</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -78,20 +80,55 @@
     .month-controls { display: flex; gap: 5px; align-items: center; flex: 1; }
     .btn-month { background: var(--accent); color: white; border: none; padding: 5px 9px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; width: 100%; }
+    /* Instrumentpanel: Vänsterjusterad med full utfyllnad till höger */
+    .dashboard-center { 
+      background: var(--card); 
+      border: 1px solid var(--border); 
+      border-radius: 8px; 
+      padding: 14px 18px; 
+      margin-bottom: 8px; 
+      display: flex; 
+      flex-wrap: wrap; 
+      align-items: center; 
+      justify-content: flex-start; 
+      gap: 24px; 
+      width: 100%; 
+    }
+    @media (max-width: 600px) {
+      .dashboard-center { justify-content: center; padding: 12px; gap: 14px; }
+    }
+
     .donut-wrapper { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
     .donut-inner-text small { display: block; font-size: 0.58rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
     .donut-inner-text strong { display: block; font-size: 0.92rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
 
-    .stacked-metrics { display: flex; flex-direction: column; gap: 4px; min-width: 180px; flex: 1; max-width: 420px; }
-    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; background: rgba(0,0,0,0.2); border-radius: 4px; border-left: 3px solid transparent; gap: 8px; }
+    /* Utdragen hela vägen till höger */
+    .stacked-metrics { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 5px; 
+      min-width: 200px; 
+      flex: 1; 
+      width: 100%; 
+    }
+    .metric-row { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 6px 12px; 
+      background: rgba(0,0,0,0.2); 
+      border-radius: 4px; 
+      border-left: 3px solid transparent; 
+      gap: 12px; 
+      width: 100%;
+    }
     .metric-row.aga { border-color: var(--aga-color); }
     .metric-row.brutto { border-color: var(--muted); }
     .metric-row.pension { border-color: var(--pension-color); }
     .metric-row.skatt { border-color: var(--tax-color); }
     .metric-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 600; white-space: nowrap; }
-    .metric-val { font-size: 0.8rem; font-weight: 700; text-align: right; white-space: nowrap; }
+    .metric-val { font-size: 0.84rem; font-weight: 700; text-align: right; white-space: nowrap; }
 
     .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; width: 100%; }
     .settings-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -226,7 +263,7 @@
   <div class="container">
     <div id="authView" class="auth-wrap hidden">
       <div style="display:flex; justify-content:center; margin-bottom: 6px;">
-        <span class="version-tag">v1.3.2</span>
+        <span class="version-tag">v1.3.5</span>
       </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
@@ -245,7 +282,7 @@
       <div class="app-header">
         <div class="app-title-wrap">
           <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
-          <span class="version-tag">v1.3.2</span>
+          <span class="version-tag">v1.3.5</span>
         </div>
         <div class="user-info">
           <button class="btn-small btn-pdf" onclick="exportToPdf()" title="Skapa en ren PDF av månaden">📄 Skapa PDF</button>
@@ -360,7 +397,7 @@
       <div id="sections"></div>
 
       <footer class="app-footer">
-        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.2</strong></div>
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.5</strong></div>
         <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
       </footer>
     </div>
@@ -376,7 +413,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "v1.3.2";
+    const APP_VERSION = "v1.3.5";
 
     function exportToPdf() {
       document.getElementById("printUser").textContent = currentUser || "Användare";
@@ -388,7 +425,7 @@
     (function setupPWA() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v1-3-2';
+          const CACHE_NAME = 'loneapp-cache-v1-3-5';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
           self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
@@ -408,6 +445,7 @@
       const pbb = 59200;
       const tabellRate = tabellNum / 100;
 
+      // Grundavdrag (GA)
       let ga = 0;
       if (annual < 0.99 * pbb) ga = 0.423 * pbb;
       else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
@@ -416,10 +454,9 @@
       else ga = 0.293 * pbb;
       ga = Math.round(ga / 100) * 100;
 
+      // Jobbskatteavdrag (JSA)
       let jsa = 0;
-      const pbb1 = 0.91 * pbb;
-      const pbb2 = 3.24 * pbb;
-      const pbb3 = 8.08 * pbb;
+      const pbb1 = 0.91 * pbb, pbb2 = 3.24 * pbb, pbb3 = 8.08 * pbb;
 
       if (annual <= pbb1) {
         jsa = 0.916 * annual * tabellRate;
@@ -492,14 +529,14 @@
             badgeText: "Bruttoavdrag",
             badgeClass: "badge-deduct",
             items: [
-              { name: "Tjänstledig lång", qty: 0, rate: -1674 },
-              { name: "Tjänstledig kort", qty: 0, rate: -2425 },
-              { name: "Kompensationsledighet", qty: 0, rate: -354 },
-              { name: "Sjuklön 80%", qty: 0, rate: -62 },
-              { name: "Sjukavdrag", qty: 0, rate: -309 },
-              { name: "Vård av barn timavdrag", qty: 0, rate: -309 },
-              { name: "Fack ej betalt", qty: 0, rate: -291 },
-              { name: "Föräldraledig", qty: 0, rate: -291 }
+              { name: "Tjänstledig lång", qty: 0, rate: 1674 },
+              { name: "Tjänstledig kort", qty: 0, rate: 2425 },
+              { name: "Kompensationsledighet", qty: 0, rate: 354 },
+              { name: "Sjuklön 80%", qty: 0, rate: 62 },
+              { name: "Sjukavdrag", qty: 0, rate: 309 },
+              { name: "Vård av barn timavdrag", qty: 0, rate: 309 },
+              { name: "Fack ej betalt", qty: 0, rate: 291 },
+              { name: "Föräldraledig", qty: 0, rate: 291 }
             ]
           },
           {
@@ -509,9 +546,9 @@
             badgeText: "Netto",
             badgeClass: "badge-neutral",
             items: [
-              { name: "Matkupong avdrag", qty: 1, rate: -62 },
-              { name: "Personalköp", qty: 1, rate: -75 },
-              { name: "Personalköp", qty: 1, rate: -131 }
+              { name: "Matkupong avdrag", qty: 1, rate: 62 },
+              { name: "Personalköp", qty: 1, rate: 75 },
+              { name: "Personalköp", qty: 1, rate: 131 }
             ]
           },
           {
@@ -967,18 +1004,26 @@
           <div id="section-rows-${sIdx}">
         `;
 
+        const isDeductSection = (sec.taxCategory === "deduction" || sec.taxCategory === "net");
+
         (sec.items || []).forEach((item, iIdx) => {
-          const sum = (item.qty || 0) * (item.rate || 0);
+          const rawSum = Math.abs(item.qty || 0) * Math.abs(item.rate || 0);
           const isSelected = selectedKeys.has(`${sIdx}-${iIdx}`);
+          
+          let displaySumText = formatKr(rawSum);
+          if (isDeductSection && rawSum > 0) {
+            displaySumText = `−${formatKr(rawSum)}`;
+          }
+
           html += `
             <div class="row-grid ${isSelected ? 'selected-row' : ''}" id="row-${sIdx}-${iIdx}">
               <div style="display:flex; justify-content:center;">
                 <input type="checkbox" class="row-checkbox" ${isSelected ? 'checked' : ''} onchange="toggleSelectRow(${sIdx}, ${iIdx}, this.checked)">
               </div>
               <div><input type="text" value="${item.name || ''}" placeholder="Beskrivning" oninput="updateItem(${sIdx}, ${iIdx}, 'name', this.value, false)"></div>
-              <div><input type="number" step="any" value="${item.qty !== undefined ? item.qty : 0}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
-              <div><input type="number" step="any" value="${item.rate !== undefined ? item.rate : 0}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
-              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${formatKr(sum)}</div>
+              <div><input type="number" step="any" value="${item.qty !== undefined ? Math.abs(item.qty) : 0}" placeholder="0" oninput="updateItem(${sIdx}, ${iIdx}, 'qty', this.value, false)"></div>
+              <div><input type="number" step="any" value="${item.rate !== undefined ? Math.abs(item.rate) : 0}" placeholder="0" id="input-rate-${sIdx}-${iIdx}" oninput="updateItem(${sIdx}, ${iIdx}, 'rate', this.value, true)"></div>
+              <div class="col-sum" id="col-sum-${sIdx}-${iIdx}">${displaySumText}</div>
             </div>
           `;
         });
@@ -1007,11 +1052,12 @@
       let benefitBase = 0;
       let preDeductions = 0;
       let netAdjustments = 0;
+      let externalPayouts = 0;
       let grossSalaryForPayout = 0;
 
       sections.forEach((sec, sIdx) => {
         (sec.items || []).forEach((item, iIdx) => {
-          const sum = (item.qty || 0) * (item.rate || 0);
+          const rawSum = Math.abs(item.qty || 0) * Math.abs(item.rate || 0);
           let cat = sec.taxCategory;
           if (!cat) {
             if (sec.id === "fixed_income" || sec.title.includes("Fast lön")) cat = "table";
@@ -1019,17 +1065,25 @@
             else if (sec.id === "benefits" || sec.title.includes("förmåner")) cat = "benefit";
             else if (sec.id === "preTaxDed" || sec.title.includes("före skatt")) cat = "deduction";
             else if (sec.id === "postTax" || sec.title.includes("Netto")) cat = "net";
+            else if (sec.id === "external" || sec.title.includes("Externa")) cat = "external";
             else cat = "table";
           }
 
-          if (cat === "table") { tableTaxBase += sum; grossSalaryForPayout += sum; }
-          else if (cat === "onetime") { oneTimeTaxBase += sum; grossSalaryForPayout += sum; }
-          else if (cat === "benefit") { benefitBase += sum; }
-          else if (cat === "deduction") { preDeductions += sum; }
-          else if (cat === "net") { netAdjustments += sum; }
+          if (cat === "table") { tableTaxBase += rawSum; grossSalaryForPayout += rawSum; }
+          else if (cat === "onetime") { oneTimeTaxBase += rawSum; grossSalaryForPayout += rawSum; }
+          else if (cat === "benefit") { benefitBase += rawSum; }
+          else if (cat === "deduction") { preDeductions += rawSum; }
+          else if (cat === "net") { netAdjustments += rawSum; }
+          else if (cat === "external") { externalPayouts += rawSum; }
 
           const sumEl = document.getElementById(`col-sum-${sIdx}-${iIdx}`);
-          if (sumEl) sumEl.textContent = formatKr(sum);
+          if (sumEl) {
+            if ((cat === "deduction" || cat === "net") && rawSum > 0) {
+              sumEl.textContent = `−${formatKr(rawSum)}`;
+            } else {
+              sumEl.textContent = formatKr(rawSum);
+            }
+          }
         });
       });
 
@@ -1037,8 +1091,12 @@
       const tableTax = getSkatteverketTax(finalTableBase, selectedTaxTable);
       const oneTimeTax = Math.round(oneTimeTaxBase * oneTimeRate);
       const totalTax = tableTax + oneTimeTax;
+      
       const totalGrossDisplay = grossSalaryForPayout - preDeductions;
-      const netSalary = totalGrossDisplay - totalTax + netAdjustments;
+      
+      // Netto = (Brutto - Total skatt - Nettoavdrag) + Externa bidrag/tillägg
+      const netSalary = totalGrossDisplay - totalTax - netAdjustments + externalPayouts;
+      
       const aga = Math.round(totalGrossDisplay * 0.3142);
       const totalEmployerCost = totalGrossDisplay + aga;
 
@@ -1055,7 +1113,6 @@
       document.getElementById("metric-skatt-tabell").textContent = `-${tableTax.toLocaleString('sv-SE')} kr`;
       document.getElementById("metric-skatt-engang").textContent = `-${oneTimeTax.toLocaleString('sv-SE')} kr`;
 
-      // Cirkeln visar nu endast: Netto, Total skatt och Pension
       renderDonutChart(Math.max(0, netSalary), Math.max(0, totalTax), Math.max(0, totalPension));
     }
 
