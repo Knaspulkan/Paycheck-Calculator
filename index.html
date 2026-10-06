@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator v1.3.1</title>
+  <title>Lönekalkylator v1.3.2</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -75,23 +75,23 @@
     .backup-actions { display: flex; gap: 4px; }
 
     .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; width: 100%; }
-    .month-controls { display: flex; gap: 6px; align-items: center; flex: 1; }
+    .month-controls { display: flex; gap: 5px; align-items: center; flex: 1; }
     .btn-month { background: var(--accent); color: white; border: none; padding: 5px 9px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; width: 100%; }
+    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; width: 100%; }
     .donut-wrapper { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
     .donut-inner-text small { display: block; font-size: 0.58rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
     .donut-inner-text strong { display: block; font-size: 0.92rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
 
     .stacked-metrics { display: flex; flex-direction: column; gap: 4px; min-width: 180px; flex: 1; max-width: 420px; }
-    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 7px; background: rgba(0,0,0,0.2); border-radius: 4px; border-left: 3px solid transparent; }
+    .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; background: rgba(0,0,0,0.2); border-radius: 4px; border-left: 3px solid transparent; gap: 8px; }
     .metric-row.aga { border-color: var(--aga-color); }
     .metric-row.brutto { border-color: var(--muted); }
     .metric-row.pension { border-color: var(--pension-color); }
     .metric-row.skatt { border-color: var(--tax-color); }
-    .metric-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 600; }
-    .metric-val { font-size: 0.8rem; font-weight: 700; }
+    .metric-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 600; white-space: nowrap; }
+    .metric-val { font-size: 0.8rem; font-weight: 700; text-align: right; white-space: nowrap; }
 
     .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; width: 100%; }
     .settings-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -200,7 +200,6 @@
     .print-only-header { display: none; }
     .hidden { display: none !important; }
 
-    /* --- UTSKRIFT / PDF STYLING --- */
     @media print {
       body { background-color: #ffffff !important; color: #0f172a !important; padding: 0 !important; }
       .app-header, .backup-bar, .month-bar, .settings-panel, 
@@ -227,7 +226,7 @@
   <div class="container">
     <div id="authView" class="auth-wrap hidden">
       <div style="display:flex; justify-content:center; margin-bottom: 6px;">
-        <span class="version-tag">v1.3.1</span>
+        <span class="version-tag">v1.3.2</span>
       </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
@@ -246,7 +245,7 @@
       <div class="app-header">
         <div class="app-title-wrap">
           <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
-          <span class="version-tag">v1.3.1</span>
+          <span class="version-tag">v1.3.2</span>
         </div>
         <div class="user-info">
           <button class="btn-small btn-pdf" onclick="exportToPdf()" title="Skapa en ren PDF av månaden">📄 Skapa PDF</button>
@@ -278,7 +277,8 @@
       <div class="month-bar">
         <div class="month-controls">
           <label for="monthSelect" style="font-size: 0.76rem; color: var(--muted);">Månad:</label>
-          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 110px;"><option value="2026-10">2026-10</option></select>
+          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 105px;"><option value="2026-10">2026-10</option></select>
+          <button class="btn-small" onclick="renameCurrentMonth()" title="Ändra namn på denna månad">✏</button>
         </div>
         <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
       </div>
@@ -343,7 +343,7 @@
             <span class="metric-val" id="metric-brutto">0 kr</span>
           </div>
           <div class="metric-row pension">
-            <span class="metric-label" style="color:var(--pension-color)">Pensionsavsättning</span>
+            <span class="metric-label" style="color:var(--pension-color)">Pension</span>
             <span class="metric-val" style="color:var(--pension-color)" id="metric-pension">0 kr</span>
           </div>
           <div class="metric-row skatt">
@@ -360,7 +360,7 @@
       <div id="sections"></div>
 
       <footer class="app-footer">
-        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.1</strong></div>
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.2</strong></div>
         <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
       </footer>
     </div>
@@ -376,7 +376,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "v1.3.1";
+    const APP_VERSION = "v1.3.2";
 
     function exportToPdf() {
       document.getElementById("printUser").textContent = currentUser || "Användare";
@@ -388,7 +388,7 @@
     (function setupPWA() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v1-3-1';
+          const CACHE_NAME = 'loneapp-cache-v1-3-2';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
           self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
@@ -408,7 +408,6 @@
       const pbb = 59200;
       const tabellRate = tabellNum / 100;
 
-      // Grundavdrag (GA)
       let ga = 0;
       if (annual < 0.99 * pbb) ga = 0.423 * pbb;
       else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
@@ -417,7 +416,6 @@
       else ga = 0.293 * pbb;
       ga = Math.round(ga / 100) * 100;
 
-      // Jobbskatteavdrag (JSA)
       let jsa = 0;
       const pbb1 = 0.91 * pbb;
       const pbb2 = 3.24 * pbb;
@@ -440,7 +438,6 @@
         taxAnnual += (taxableAnnual - 643000) * 0.20;
       }
 
-      // Exakt kalibrering för tabellintervall 61 601 - 61 800 kr
       if (monthlyIncome >= 61601 && monthlyIncome <= 61800 && tabellNum === 33) {
         return 16949;
       }
@@ -789,6 +786,28 @@
       loadCurrentMonth();
     }
 
+    function renameCurrentMonth() {
+      const current = currentMonthKey;
+      const newName = prompt("Byt namn på denna månad / kalkylblad:", current);
+      if (!newName || newName.trim() === "" || newName === current) return;
+      
+      const cleanName = newName.trim();
+      const users = getUsers();
+      if (users[currentUser].months[cleanName]) {
+        return alert("En månad med detta namn finns redan!");
+      }
+
+      saveUndoState();
+      users[currentUser].months[cleanName] = users[currentUser].months[current];
+      delete users[currentUser].months[current];
+      users[currentUser].currentMonth = cleanName;
+      currentMonthKey = cleanName;
+      saveUsers(users);
+
+      populateMonthDropdown();
+      loadCurrentMonth();
+    }
+
     function updateTaxSetting(key, val) {
       saveUndoState();
       const users = getUsers();
@@ -807,24 +826,22 @@
       render();
     }
 
-    function renderDonutChart(netto, skatt, aga, pension) {
+    function renderDonutChart(netto, totalSkatt, totalPension) {
       const svg = document.getElementById("donutChart");
-      const total = netto + skatt + aga + pension;
+      const total = netto + totalSkatt + totalPension;
       if (total <= 0) {
         svg.innerHTML = '<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>';
         return;
       }
       const nPct = (netto / total) * 100;
-      const sPct = (skatt / total) * 100;
-      const aPct = (aga / total) * 100;
-      const pPct = (pension / total) * 100;
+      const sPct = (totalSkatt / total) * 100;
+      const pPct = (totalPension / total) * 100;
 
       svg.innerHTML = `
         <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>
         <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--accent)" stroke-width="4.5" stroke-dasharray="${nPct} ${100 - nPct}" stroke-dashoffset="25"></circle>
         <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--tax-color)" stroke-width="4.5" stroke-dasharray="${sPct} ${100 - sPct}" stroke-dashoffset="${25 - nPct}"></circle>
-        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--aga-color)" stroke-width="4.5" stroke-dasharray="${aPct} ${100 - aPct}" stroke-dashoffset="${25 - nPct - sPct}"></circle>
-        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--pension-color)" stroke-width="4.5" stroke-dasharray="${pPct} ${100 - pPct}" stroke-dashoffset="${25 - nPct - sPct - aPct}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--pension-color)" stroke-width="4.5" stroke-dasharray="${pPct} ${100 - pPct}" stroke-dashoffset="${25 - nPct - sPct}"></circle>
       `;
     }
 
@@ -1038,7 +1055,8 @@
       document.getElementById("metric-skatt-tabell").textContent = `-${tableTax.toLocaleString('sv-SE')} kr`;
       document.getElementById("metric-skatt-engang").textContent = `-${oneTimeTax.toLocaleString('sv-SE')} kr`;
 
-      renderDonutChart(Math.max(0, netSalary), Math.max(0, totalTax), Math.max(0, aga), Math.max(0, totalPension));
+      // Cirkeln visar nu endast: Netto, Total skatt och Pension
+      renderDonutChart(Math.max(0, netSalary), Math.max(0, totalTax), Math.max(0, totalPension));
     }
 
     function updateItem(sIdx, iIdx, key, val, isRateChange) {
