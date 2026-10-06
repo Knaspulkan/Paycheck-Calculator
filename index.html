@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator v1.3.0</title>
+  <title>Lönekalkylator v1.3.1</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,9 +27,18 @@
       --version-badge: #0284c7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 6px; padding-bottom: 95px; }
     
-    .container { max-width: 900px; margin: 0 auto; }
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    
+    body { padding: 6px; padding-bottom: 95px; }
+    
+    .container { width: 100%; max-width: 900px; margin: 0 auto; overflow-x: hidden; }
 
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
@@ -48,35 +57,34 @@
     .auth-btn { width: 100%; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 7px; font-weight: 600; cursor: pointer; margin-top: 6px; }
     .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
     
-    .app-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px; margin-bottom: 8px; }
-    .app-title-wrap { display: flex; align-items: center; gap: 8px; }
-    .version-tag { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.4); font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 12px; letter-spacing: 0.3px; }
-    .user-info { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
-    .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .app-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 2px; margin-bottom: 8px; width: 100%; }
+    .app-title-wrap { display: flex; align-items: center; gap: 6px; }
+    .version-tag { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.4); font-size: 0.65rem; font-weight: 700; padding: 2px 5px; border-radius: 10px; }
+    .user-info { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--muted); }
+    
+    .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
     .btn-small:hover { background: #334155; }
-    .btn-small:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
     .btn-admin { background: #6366f1; }
-    .btn-download-app { background: #0284c7; color: white; }
-    .btn-download-app:hover { background: #0369a1; }
     .btn-pdf { background: #059669; color: white; }
     .btn-pdf:hover { background: #047857; }
     
-    .backup-bar { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 6px; padding: 6px 8px; }
+    .backup-bar { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; background: rgba(255,255,255,0.015); border: 1px dashed var(--border); border-radius: 6px; padding: 6px 8px; width: 100%; }
     .backup-row { display: flex; justify-content: space-between; align-items: center; }
     .backup-bar span { font-size: 0.72rem; color: var(--muted); }
     .backup-actions { display: flex; gap: 4px; }
 
-    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; width: 100%; }
     .month-controls { display: flex; gap: 6px; align-items: center; flex: 1; }
     .btn-month { background: var(--accent); color: white; border: none; padding: 5px 9px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }
-    .donut-wrapper { position: relative; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dashboard-center { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; width: 100%; }
+    .donut-wrapper { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
-    .donut-inner-text small { display: block; font-size: 0.62rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
-    .donut-inner-text strong { display: block; font-size: 0.95rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
+    .donut-inner-text small { display: block; font-size: 0.58rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .donut-inner-text strong { display: block; font-size: 0.92rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
 
-    .stacked-metrics { display: flex; flex-direction: column; gap: 4px; min-width: 190px; flex: 1; max-width: 420px; }
+    .stacked-metrics { display: flex; flex-direction: column; gap: 4px; min-width: 180px; flex: 1; max-width: 420px; }
     .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 7px; background: rgba(0,0,0,0.2); border-radius: 4px; border-left: 3px solid transparent; }
     .metric-row.aga { border-color: var(--aga-color); }
     .metric-row.brutto { border-color: var(--muted); }
@@ -85,11 +93,11 @@
     .metric-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 600; }
     .metric-val { font-size: 0.8rem; font-weight: 700; }
 
-    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; }
-    .settings-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; width: 100%; }
+    .settings-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .settings-panel label { color: var(--muted); margin-right: 2px; }
     
-    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
+    .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; overflow: hidden; width: 100%; }
     .section-header { 
       padding: 6px 8px; 
       background: rgba(255,255,255,0.02); 
@@ -109,29 +117,28 @@
 
     .row-grid {
       display: grid;
-      grid-template-columns: 22px minmax(95px, 1fr) 38px 60px 70px;
-      gap: 5px;
-      padding: 5px 6px;
+      grid-template-columns: 20px minmax(80px, 1fr) 36px 56px 68px;
+      gap: 4px;
+      padding: 5px 4px;
       align-items: center;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       background: var(--card);
       transition: background 0.1s;
+      width: 100%;
     }
-    .row-grid.selected-row {
-      background: rgba(16, 185, 129, 0.08);
-    }
+    .row-grid.selected-row { background: rgba(16, 185, 129, 0.08); }
     .row-header {
       font-size: 0.62rem;
       color: var(--muted);
       text-transform: uppercase;
       font-weight: 700;
       background: rgba(0,0,0,0.25);
-      padding: 4px 6px;
+      padding: 4px;
     }
 
     .row-checkbox {
-      width: 17px;
-      height: 17px;
+      width: 16px;
+      height: 16px;
       cursor: pointer;
       accent-color: var(--accent);
       margin: 0 auto;
@@ -142,7 +149,7 @@
       border: 1px solid var(--border); 
       color: var(--text); 
       border-radius: 4px; 
-      padding: 5px 4px; 
+      padding: 5px 3px; 
       font-size: 0.78rem; 
       width: 100%; 
       outline: none; 
@@ -152,7 +159,7 @@
     input[type="number"] { text-align: right; }
 
     .col-sum { text-align: right; font-weight: 700; font-size: 0.78rem; white-space: nowrap; overflow: hidden; }
-    .btn-add { font-size: 0.75rem; color: var(--accent); font-weight: 600; background: none; border: none; cursor: pointer; padding: 7px 10px; width: 100%; text-align: left; }
+    .btn-add { font-size: 0.75rem; color: var(--accent); font-weight: 600; background: none; border: none; cursor: pointer; padding: 7px 8px; width: 100%; text-align: left; }
     .btn-add:hover { background: rgba(16,185,129,0.05); }
 
     .batch-bar {
@@ -164,25 +171,26 @@
       border: 1px solid var(--accent);
       box-shadow: 0 10px 25px rgba(0,0,0,0.6);
       border-radius: 25px;
-      padding: 6px 14px;
+      padding: 6px 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       z-index: 100;
+      max-width: 95%;
     }
-    .batch-count { font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-right: 4px; white-space: nowrap; }
+    .batch-count { font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-right: 2px; white-space: nowrap; }
     .batch-btn {
       background: #334155;
       color: var(--text);
       border: none;
       border-radius: 15px;
-      padding: 5px 10px;
-      font-size: 0.74rem;
+      padding: 5px 9px;
+      font-size: 0.72rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 2px;
     }
     .batch-btn:hover { background: #475569; }
     .batch-btn.danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
@@ -194,68 +202,22 @@
 
     /* --- UTSKRIFT / PDF STYLING --- */
     @media print {
-      body {
-        background-color: #ffffff !important;
-        color: #0f172a !important;
-        padding: 0 !important;
-      }
+      body { background-color: #ffffff !important; color: #0f172a !important; padding: 0 !important; }
       .app-header, .backup-bar, .month-bar, .settings-panel, 
       .btn-add, .batch-bar, .app-footer, .row-checkbox, .row-header > div:first-child,
-      .btn-small, input[type="checkbox"] {
-        display: none !important;
-      }
-      .print-only-header {
-        display: block !important;
-        border-bottom: 2px solid #0f172a;
-        padding-bottom: 8px;
-        margin-bottom: 16px;
-      }
+      .btn-small, input[type="checkbox"] { display: none !important; }
+      .print-only-header { display: block !important; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 16px; }
       .print-only-header h2 { font-size: 1.4rem; color: #0f172a; margin: 0; }
       .print-meta-grid { display: flex; justify-content: space-between; font-size: 0.8rem; margin-top: 6px; color: #475569; }
-      .dashboard-center {
-        background: #f8fafc !important;
-        border: 1px solid #cbd5e1 !important;
-        color: #0f172a !important;
-        page-break-inside: avoid;
-        padding: 10px !important;
-        margin-bottom: 16px !important;
-      }
+      .dashboard-center { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; page-break-inside: avoid; padding: 10px !important; margin-bottom: 16px !important; }
       .donut-wrapper { display: none !important; }
-      .metric-row {
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        color: #0f172a !important;
-      }
+      .metric-row { background: #ffffff !important; border: 1px solid #e2e8f0 !important; color: #0f172a !important; }
       .metric-label, .metric-val { color: #0f172a !important; }
-      .section-card {
-        background: #ffffff !important;
-        border: 1px solid #cbd5e1 !important;
-        margin-bottom: 12px !important;
-        page-break-inside: avoid;
-      }
-      .section-header {
-        background: #f1f5f9 !important;
-        color: #0f172a !important;
-        border-bottom: 1px solid #cbd5e1 !important;
-        font-size: 0.85rem !important;
-      }
-      .row-header {
-        background: #e2e8f0 !important;
-        color: #334155 !important;
-      }
-      .row-grid {
-        background: #ffffff !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        color: #0f172a !important;
-        grid-template-columns: minmax(130px, 1fr) 45px 75px 85px !important;
-      }
-      input[type="text"], input[type="number"] {
-        background: transparent !important;
-        border: none !important;
-        color: #0f172a !important;
-        font-weight: 500 !important;
-        padding: 0 !important;
-      }
+      .section-card { background: #ffffff !important; border: 1px solid #cbd5e1 !important; margin-bottom: 12px !important; page-break-inside: avoid; }
+      .section-header { background: #f1f5f9 !important; color: #0f172a !important; border-bottom: 1px solid #cbd5e1 !important; font-size: 0.85rem !important; }
+      .row-header { background: #e2e8f0 !important; color: #334155 !important; }
+      .row-grid { background: #ffffff !important; border-bottom: 1px solid #e2e8f0 !important; color: #0f172a !important; grid-template-columns: minmax(130px, 1fr) 45px 75px 85px !important; }
+      input[type="text"], input[type="number"] { background: transparent !important; border: none !important; color: #0f172a !important; font-weight: 500 !important; padding: 0 !important; }
       .col-sum { color: #0f172a !important; font-weight: 700 !important; }
     }
   </style>
@@ -265,7 +227,7 @@
   <div class="container">
     <div id="authView" class="auth-wrap hidden">
       <div style="display:flex; justify-content:center; margin-bottom: 6px;">
-        <span class="version-tag">v1.3.0</span>
+        <span class="version-tag">v1.3.1</span>
       </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
@@ -284,11 +246,10 @@
       <div class="app-header">
         <div class="app-title-wrap">
           <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
-          <span class="version-tag">v1.3.0</span>
+          <span class="version-tag">v1.3.1</span>
         </div>
         <div class="user-info">
           <button class="btn-small btn-pdf" onclick="exportToPdf()" title="Skapa en ren PDF av månaden">📄 Skapa PDF</button>
-          <button class="btn-small btn-download-app" onclick="downloadAppSourceFile()" title="Ladda ner denna index-v1.3.0.html fil direkt">📥 Ladda ner HTML</button>
           <button class="btn-small" id="undoBtn" onclick="undoAction()" disabled title="Ångra senaste ändringen">↩ Ångra</button>
           <span id="currentUserLabel">knaspulkan</span>
           <button class="btn-small" onclick="logout()">Logga ut</button>
@@ -324,7 +285,7 @@
 
       <div class="settings-panel">
         <div class="settings-row">
-          <div style="flex: 1; min-width: 190px; display:flex; gap: 4px; align-items:center;">
+          <div style="flex: 1; min-width: 170px; display:flex; gap: 4px; align-items:center;">
             <label>Avtal:</label>
             <select id="agreementSelect" onchange="applyAgreementTemplate(this.value)" style="flex:1;">
               <option value="teknik_unionen" selected>Teknikavtalet (Unionen / Tjänstemän)</option>
@@ -349,7 +310,7 @@
           </div>
           <div>
             <label>Engångsskatt (%):</label>
-            <input type="number" id="oneTimeTaxRate" value="54" style="width: 48px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
+            <input type="number" id="oneTimeTaxRate" value="54" style="width: 46px; text-align: center;" oninput="updateTaxSetting('oneTimeTaxRate', this.value)">
           </div>
         </div>
       </div>
@@ -365,7 +326,7 @@
 
       <div class="dashboard-center">
         <div class="donut-wrapper">
-          <svg id="donutChart" width="130" height="130" viewBox="0 0 42 42"></svg>
+          <svg id="donutChart" width="120" height="120" viewBox="0 0 42 42"></svg>
           <div class="donut-inner-text">
             <small>Nettolön</small>
             <strong id="center-netto">0 kr</strong>
@@ -399,7 +360,7 @@
       <div id="sections"></div>
 
       <footer class="app-footer">
-        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.0</strong></div>
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.1</strong></div>
         <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
       </footer>
     </div>
@@ -415,19 +376,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "v1.3.0";
-
-    function downloadAppSourceFile() {
-      const fullHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-      const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `index-${APP_VERSION}.html`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(a.href);
-    }
+    const APP_VERSION = "v1.3.1";
 
     function exportToPdf() {
       document.getElementById("printUser").textContent = currentUser || "Användare";
@@ -439,7 +388,7 @@
     (function setupPWA() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v1-3-0';
+          const CACHE_NAME = 'loneapp-cache-v1-3-1';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
           self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
@@ -717,6 +666,79 @@
         });
       });
       saveUsers(users);
+    }
+
+    function exportUserData() {
+      const users = getUsers();
+      const userData = users[currentUser];
+      if (!userData) return;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData, null, 2));
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `lonebackup-${currentUser}-${dateStr}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importUserData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed.months) throw new Error("Ogiltig fil");
+          if (!confirm("Ersätt dina sparade månader med backup-filen?")) return;
+          saveUndoState();
+          const users = getUsers();
+          users[currentUser].months = parsed.months;
+          users[currentUser].currentMonth = parsed.currentMonth || Object.keys(parsed.months)[0];
+          saveUsers(users);
+          currentMonthKey = users[currentUser].currentMonth;
+          populateMonthDropdown();
+          loadCurrentMonth();
+          alert("Din data är återställd!");
+        } catch (err) {
+          alert("Kunde inte läsa in backup-filen.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function exportAllUsers() {
+      const users = getUsers();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2));
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `loneapp-ALLA-ANVANDARE-${dateStr}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importAllUsers(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (typeof parsed !== "object") throw new Error("Ogiltig databasfil");
+          if (!confirm("VARNING: Detta skriver över hela databasen för samtliga användare. Fortsätt?")) return;
+          saveUsers(parsed);
+          populateMonthDropdown();
+          loadCurrentMonth();
+          alert("Hela användardatabasen återställd!");
+        } catch (err) {
+          alert("Kunde inte återställa databasen.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
     }
 
     function populateMonthDropdown() {
