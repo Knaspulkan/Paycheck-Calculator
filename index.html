@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator v1.4.4</title>
+  <title>Lönekalkylator v1.4.6</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -28,7 +28,8 @@
       --pension-color: #a855f7;
       --danger: #ef4444;
       --input-bg: #0d1527;
-      --version-badge: #0284c7;
+      --btn-dark-blue: #1e293b;
+      --btn-dark-border: #334155;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
@@ -69,8 +70,6 @@
     .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
     .btn-small:hover { background: #334155; }
     .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn-small.danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
-    .btn-small.danger:hover { background: var(--danger); color: white; }
     .btn-pdf { background: #059669; color: white; }
     .btn-pdf:hover { background: #047857; }
     
@@ -79,9 +78,40 @@
     .backup-bar span { font-size: 0.72rem; color: var(--muted); }
     .backup-actions { display: flex; gap: 4px; }
 
-    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; width: 100%; }
-    .month-controls { display: flex; gap: 5px; align-items: center; flex: 1; }
-    .btn-month { background: var(--accent); color: white; border: none; padding: 5px 9px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    /* Månadsrad med integrerade ikonknappar */
+    .month-bar { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; align-items: center; margin-bottom: 8px; width: 100%; }
+    .month-controls { display: flex; gap: 6px; align-items: center; width: 100%; }
+    
+    /* Mörkblå fyrkantiga knappar med vita ikoner */
+    .btn-icon-square {
+      background: var(--btn-dark-blue);
+      border: 1px solid var(--btn-dark-border);
+      color: #ffffff;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+    .btn-icon-square:hover {
+      background: #283850;
+      border-color: #475569;
+    }
+    .btn-icon-square.danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: var(--danger);
+      color: #fca5a5;
+    }
+    .btn-icon-square svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
 
     .dashboard-center { 
       background: var(--card); 
@@ -272,7 +302,7 @@
   <div class="container">
     <div id="authView" class="auth-wrap hidden">
       <div style="display:flex; justify-content:center; margin-bottom: 6px;">
-        <span class="version-tag">v1.4.4</span>
+        <span class="version-tag">v1.4.6</span>
       </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
@@ -286,7 +316,7 @@
       <div class="app-header">
         <div class="app-title-wrap">
           <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
-          <span class="version-tag">v1.4.4</span>
+          <span class="version-tag">v1.4.6</span>
           <span class="sync-tag" id="syncStatusTag">🟢 Synkad</span>
         </div>
         <div class="user-info">
@@ -308,14 +338,27 @@
         </div>
       </div>
 
+      <!-- Månadsrad med integrerade ikonknappar -->
       <div class="month-bar">
         <div class="month-controls">
           <label for="monthSelect" style="font-size: 0.76rem; color: var(--muted);">Månad:</label>
-          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 105px;"><option value="2026-10">2026-10</option></select>
-          <button class="btn-small" onclick="renameCurrentMonth()" title="Ändra namn på denna månad">✏</button>
-          <button class="btn-small danger" onclick="deleteCurrentMonth()" title="Ta bort denna månad">🗑</button>
+          <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 140px;"><option value="2026-10">2026-10</option></select>
+          
+          <!-- + Ny månad -->
+          <button class="btn-icon-square" onclick="createNewMonth()" title="Lägg till ny månad">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          </button>
+
+          <!-- ✏ Byt namn -->
+          <button class="btn-icon-square" onclick="renameCurrentMonth()" title="Ändra namn på denna månad">
+            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </button>
+
+          <!-- 🗑 Ta bort -->
+          <button class="btn-icon-square danger" onclick="deleteCurrentMonth()" title="Ta bort denna månad">
+            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+          </button>
         </div>
-        <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
       </div>
 
       <div class="settings-panel">
@@ -395,7 +438,7 @@
       <div id="sections"></div>
 
       <footer class="app-footer">
-        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.4.4</strong> • Molnsynk via Firestore</div>
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.4.6</strong> • Molnsynk via Firestore</div>
         <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
       </footer>
     </div>
@@ -411,7 +454,7 @@
   </div>
 
   <script>
-    const APP_VERSION = "v1.4.4";
+    const APP_VERSION = "v1.4.6";
 
     // --- FIREBASE KONFIGURATION ---
     const firebaseConfig = {
@@ -463,7 +506,7 @@
     (function setupPWA() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v1-4-4';
+          const CACHE_NAME = 'loneapp-cache-v1-4-6';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
           self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
@@ -650,13 +693,13 @@
         saveTimeout = setTimeout(() => {
           const userData = users[currentUser];
           if (!userData) return;
-          db.collection("users").doc(currentUser).set(userData, { merge: true })
+          db.collection("users").doc(currentUser).set(userData)
             .then(() => setSyncStatus("synced"))
             .catch(err => {
               console.warn("Kunde inte synka till Firestore:", err);
               setSyncStatus("offline");
             });
-        }, 400);
+        }, 300);
       }
     }
 
@@ -865,19 +908,20 @@
     function createNewMonth() {
       const name = prompt("Ange namn på ny månad (t.ex. 2026-11):");
       if (!name) return;
+      const cleanName = name.trim();
       const users = getUsers();
-      if (users[currentUser].months[name]) return alert("Denna månad finns redan!");
+      if (users[currentUser].months[cleanName]) return alert("Denna månad finns redan!");
 
       saveUndoState();
       const prevData = users[currentUser].months[currentMonthKey];
-      users[currentUser].months[name] = {
+      users[currentUser].months[cleanName] = {
         taxTable: prevData.taxTable || 33,
         oneTimeTaxRate: prevData.oneTimeTaxRate || 54,
         agreement: prevData.agreement || "teknik_unionen",
         sections: JSON.parse(JSON.stringify(prevData.sections))
       };
-      users[currentUser].currentMonth = name;
-      currentMonthKey = name;
+      users[currentUser].currentMonth = cleanName;
+      currentMonthKey = cleanName;
       saveUsers(users);
 
       populateMonthDropdown();
@@ -885,9 +929,9 @@
     }
 
     function renameCurrentMonth() {
-      const current = currentMonthKey;
-      const newName = prompt("Byt namn på denna månad / kalkylblad:", current);
-      if (!newName || newName.trim() === "" || newName === current) return;
+      const oldName = currentMonthKey;
+      const newName = prompt("Byt namn på denna månad / kalkylblad:", oldName);
+      if (!newName || newName.trim() === "" || newName.trim() === oldName) return;
       
       const cleanName = newName.trim();
       const users = getUsers();
@@ -896,12 +940,18 @@
       }
 
       saveUndoState();
-      users[currentUser].months[cleanName] = users[currentUser].months[current];
-      delete users[currentUser].months[current];
+      users[currentUser].months[cleanName] = users[currentUser].months[oldName];
+      delete users[currentUser].months[oldName];
       users[currentUser].currentMonth = cleanName;
       currentMonthKey = cleanName;
-      saveUsers(users);
 
+      if (db && currentUser) {
+        db.collection("users").doc(currentUser).update({
+          [`months.${oldName}`]: firebase.firestore.FieldValue.delete()
+        }).catch(() => {});
+      }
+
+      saveUsers(users);
       populateMonthDropdown();
       loadCurrentMonth();
     }
@@ -914,19 +964,26 @@
         return alert("Du kan inte ta bort din enda månad. Skapa en ny månad först.");
       }
 
-      if (!confirm(`Är du säker på att du vill ta bort månaden "${currentMonthKey}"? Detta kan inte ångras.`)) {
+      const toDelete = currentMonthKey;
+      if (!confirm(`Är du säker på att du vill ta bort månaden "${toDelete}"? Detta kan inte ångras.`)) {
         return;
       }
 
       saveUndoState();
-      delete users[currentUser].months[currentMonthKey];
+      delete users[currentUser].months[toDelete];
 
       const remainingKeys = Object.keys(users[currentUser].months).sort();
       const nextMonth = remainingKeys[remainingKeys.length - 1];
       users[currentUser].currentMonth = nextMonth;
       currentMonthKey = nextMonth;
-      saveUsers(users);
 
+      if (db && currentUser) {
+        db.collection("users").doc(currentUser).update({
+          [`months.${toDelete}`]: firebase.firestore.FieldValue.delete()
+        }).catch(() => {});
+      }
+
+      saveUsers(users);
       populateMonthDropdown();
       loadCurrentMonth();
     }
@@ -1180,11 +1237,9 @@
       
       const totalGrossDisplay = grossSalaryForPayout - preDeductions;
       
-      // Nettojustering: Förmånsvärdet (benefitBase) dras automatiskt av härifrån 
-      // så att du slipper lägga till ett motkonterande nettoavdrag manuellt!
+      // Förmånsvärdet dras av automatiskt så att man slipper ett motkonterande nettoavdrag
       const netSalary = totalGrossDisplay - totalTax - benefitBase - netAdjustments + externalPayouts;
       
-      // Arbetsgivaravgiften baseras på kontant lön + skattepliktiga förmåner
       const aga = Math.round((totalGrossDisplay + benefitBase) * 0.3142);
       const totalEmployerCost = totalGrossDisplay + benefitBase + aga;
 
