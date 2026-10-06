@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator v1.3.5</title>
+  <title>Lönekalkylator v1.4.0</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Lönekalkylator">
   <meta name="theme-color" content="#0b1120">
   <link id="manifest-placeholder" rel="manifest">
+
+  <!-- Firebase SDK (CDN Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -55,17 +59,16 @@
     .auth-field { margin-bottom: 10px; }
     .auth-field label { display: block; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
     .auth-btn { width: 100%; padding: 9px; background: var(--accent); color: white; border: none; border-radius: 7px; font-weight: 600; cursor: pointer; margin-top: 6px; }
-    .auth-switch { text-align: center; margin-top: 12px; font-size: 0.8rem; color: var(--muted); cursor: pointer; text-decoration: underline; }
     
     .app-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 2px; margin-bottom: 8px; width: 100%; }
     .app-title-wrap { display: flex; align-items: center; gap: 6px; }
     .version-tag { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid rgba(2, 132, 199, 0.4); font-size: 0.65rem; font-weight: 700; padding: 2px 5px; border-radius: 10px; }
+    .sync-tag { font-size: 0.65rem; font-weight: 600; padding: 2px 6px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #34d399; }
     .user-info { display: flex; align-items: center; gap: 5px; font-size: 0.78rem; color: var(--muted); }
     
     .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
     .btn-small:hover { background: #334155; }
     .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn-admin { background: #6366f1; }
     .btn-pdf { background: #059669; color: white; }
     .btn-pdf:hover { background: #047857; }
     
@@ -78,7 +81,6 @@
     .month-controls { display: flex; gap: 5px; align-items: center; flex: 1; }
     .btn-month { background: var(--accent); color: white; border: none; padding: 5px 9px; border-radius: 5px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
-    /* Instrumentpanel: Vänsterjusterad med full utfyllnad till höger */
     .dashboard-center { 
       background: var(--card); 
       border: 1px solid var(--border); 
@@ -101,7 +103,6 @@
     .donut-inner-text small { display: block; font-size: 0.58rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
     .donut-inner-text strong { display: block; font-size: 0.92rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
 
-    /* Utdragen hela vägen till höger */
     .stacked-metrics { 
       display: flex; 
       flex-direction: column; 
@@ -261,26 +262,22 @@
   <div class="container">
     <div id="authView" class="auth-wrap hidden">
       <div style="display:flex; justify-content:center; margin-bottom: 6px;">
-        <span class="version-tag">v1.3.5</span>
+        <span class="version-tag">v1.4.0</span>
       </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
         <label>Användarnamn</label>
         <input type="text" id="usernameInput" value="Knaspulkan" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
       </div>
-      <div class="auth-field">
-        <label>Lösenord (valfritt lokalt)</label>
-        <input type="password" id="passwordInput" placeholder="••••••••" onkeydown="if(event.key==='Enter') handleAuthSubmit()">
-      </div>
-      <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Logga in</button>
-      <div class="auth-switch" id="authToggleText" onclick="toggleAuthMode()">Inget konto? Skapa användare här</div>
+      <button class="auth-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">Öppna kalkylator</button>
     </div>
 
     <div id="appView">
       <div class="app-header">
         <div class="app-title-wrap">
           <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
-          <span class="version-tag">v1.3.5</span>
+          <span class="version-tag">v1.4.0</span>
+          <span class="sync-tag" id="syncStatusTag">🟢 Synkad</span>
         </div>
         <div class="user-info">
           <button class="btn-small btn-pdf" onclick="exportToPdf()" title="Skapa en ren PDF av månaden">📄 Skapa PDF</button>
@@ -292,19 +289,11 @@
 
       <div class="backup-bar">
         <div class="backup-row">
-          <span>Min säkerhetskopia (Data)</span>
+          <span>Säkerhetskopia (Lokal filbackup)</span>
           <div class="backup-actions">
-            <button class="btn-small" onclick="exportUserData()">Spara data</button>
-            <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ data</button>
+            <button class="btn-small" onclick="exportUserData()">Spara fil</button>
+            <button class="btn-small" onclick="document.getElementById('importFileInput').click()">Återställ fil</button>
             <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importUserData(event)">
-          </div>
-        </div>
-        <div class="backup-row" id="adminBackupRow" style="display:none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px;">
-          <span style="color: #818cf8; font-weight: 600;">Admin: Hela databasen</span>
-          <div class="backup-actions">
-            <button class="btn-small btn-admin" onclick="exportAllUsers()">Exportera alla</button>
-            <button class="btn-small btn-admin" onclick="document.getElementById('adminImportFileInput').click()">Importera alla</button>
-            <input type="file" id="adminImportFileInput" accept=".json" style="display:none" onchange="importAllUsers(event)">
           </div>
         </div>
       </div>
@@ -395,7 +384,7 @@
       <div id="sections"></div>
 
       <footer class="app-footer">
-        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.3.5</strong></div>
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.4.0</strong> • Molnsynk via Firestore</div>
         <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
       </footer>
     </div>
@@ -411,7 +400,47 @@
   </div>
 
   <script>
-    const APP_VERSION = "v1.3.5";
+    const APP_VERSION = "v1.4.0";
+
+    // --- FIREBASE KONFIGURATION & INITIERING ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyDK_5AQgsDe8IHUhRHyKd3E0tQ96uumIgw",
+      authDomain: "paycheck-calculator-34718.firebaseapp.com",
+      projectId: "paycheck-calculator-34718",
+      storageBucket: "paycheck-calculator-34718.firebasestorage.app",
+      messagingSenderId: "420360076797",
+      appId: "1:420360076797:web:9dad6d595f9fde8ba66d94",
+      measurementId: "G-P3NJD77XTS"
+    };
+
+    let db = null;
+    let firestoreUnsubscribe = null;
+    let isRemoteUpdate = false;
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+    } catch (err) {
+      console.warn("Kunde inte ansluta till Firebase:", err);
+    }
+
+    function setSyncStatus(status) {
+      const el = document.getElementById("syncStatusTag");
+      if (!el) return;
+      if (status === "syncing") {
+        el.textContent = "🟠 Sparar...";
+        el.style.color = "#fbbf24";
+        el.style.background = "rgba(245, 158, 11, 0.15)";
+      } else if (status === "synced") {
+        el.textContent = "🟢 Molnsynkad";
+        el.style.color = "#34d399";
+        el.style.background = "rgba(16, 185, 129, 0.15)";
+      } else if (status === "offline") {
+        el.textContent = "⚪ Lokalt läge";
+        el.style.color = "#94a3b8";
+        el.style.background = "rgba(148, 163, 184, 0.15)";
+      }
+    }
 
     function exportToPdf() {
       document.getElementById("printUser").textContent = currentUser || "Användare";
@@ -423,7 +452,7 @@
     (function setupPWA() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v1-3-5';
+          const CACHE_NAME = 'loneapp-cache-v1-4-0';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
           self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
@@ -443,7 +472,6 @@
       const pbb = 59200;
       const tabellRate = tabellNum / 100;
 
-      // Grundavdrag (GA)
       let ga = 0;
       if (annual < 0.99 * pbb) ga = 0.423 * pbb;
       else if (annual < 2.72 * pbb) ga = 0.423 * pbb + 0.2 * (annual - 0.99 * pbb);
@@ -452,7 +480,6 @@
       else ga = 0.293 * pbb;
       ga = Math.round(ga / 100) * 100;
 
-      // Jobbskatteavdrag (JSA)
       let jsa = 0;
       const pbb1 = 0.91 * pbb, pbb2 = 3.24 * pbb, pbb3 = 8.08 * pbb;
 
@@ -569,6 +596,7 @@
     let currentMonthKey = null;
     let selectedKeys = new Set();
     let undoStack = [];
+    let saveTimeout = null;
 
     function saveUndoState() {
       try {
@@ -601,8 +629,66 @@
       try { return JSON.parse(localStorage.getItem("salary_app_users") || "{}"); } catch (e) { return {}; }
     }
 
-    function saveUsers(users) {
-      try { localStorage.setItem("salary_app_users", JSON.stringify(users)); } catch (e) {}
+    function saveUsers(users, syncToCloud = true) {
+      try {
+        localStorage.setItem("salary_app_users", JSON.stringify(users));
+      } catch (e) {}
+
+      if (syncToCloud && db && currentUser && !isRemoteUpdate) {
+        setSyncStatus("syncing");
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+          const userData = users[currentUser];
+          if (!userData) return;
+          db.collection("users").doc(currentUser).set(userData, { merge: true })
+            .then(() => setSyncStatus("synced"))
+            .catch(err => {
+              console.warn("Kunde inte synka till Firestore:", err);
+              setSyncStatus("offline");
+            });
+        }, 400);
+      }
+    }
+
+    function setupFirestoreListener(username) {
+      if (!db) {
+        setSyncStatus("offline");
+        return;
+      }
+      if (firestoreUnsubscribe) firestoreUnsubscribe();
+
+      firestoreUnsubscribe = db.collection("users").doc(username).onSnapshot(doc => {
+        if (doc.exists) {
+          const cloudData = doc.data();
+          const localUsers = getUsers();
+          const localData = localUsers[username];
+
+          if (JSON.stringify(localData) !== JSON.stringify(cloudData)) {
+            isRemoteUpdate = true;
+            localUsers[username] = cloudData;
+            saveUsers(localUsers, false);
+            
+            const mKeys = Object.keys(cloudData.months || {}).sort();
+            if (!cloudData.months[currentMonthKey]) {
+              currentMonthKey = cloudData.currentMonth || (mKeys.length ? mKeys[mKeys.length - 1] : "2026-10");
+            }
+            populateMonthDropdown();
+            loadCurrentMonth();
+            isRemoteUpdate = false;
+          }
+          setSyncStatus("synced");
+        } else {
+          // Första gången användaren körs mot Firestore: Spara befintlig lokal data dit
+          const localUsers = getUsers();
+          if (localUsers[username]) {
+            db.collection("users").doc(username).set(localUsers[username]);
+          }
+          setSyncStatus("synced");
+        }
+      }, err => {
+        console.warn("Lyssnare mot Firestore misslyckades:", err);
+        setSyncStatus("offline");
+      });
     }
 
     function loginUser(username) {
@@ -611,7 +697,6 @@
       document.getElementById("authView").classList.add("hidden");
       document.getElementById("appView").classList.remove("hidden");
       document.getElementById("currentUserLabel").textContent = username;
-      document.getElementById("adminBackupRow").style.display = (username === "admin") ? "flex" : "none";
 
       const users = getUsers();
       if (!users[username]) {
@@ -641,6 +726,7 @@
 
       populateMonthDropdown();
       loadCurrentMonth();
+      setupFirestoreListener(username);
     }
 
     function handleAuthSubmit() {
@@ -649,6 +735,7 @@
     }
 
     function logout() {
+      if (firestoreUnsubscribe) firestoreUnsubscribe();
       localStorage.removeItem("salary_app_active_user");
       currentUser = null;
       document.getElementById("appView").classList.add("hidden");
@@ -731,42 +818,9 @@
           currentMonthKey = users[currentUser].currentMonth;
           populateMonthDropdown();
           loadCurrentMonth();
-          alert("Din data är återställd!");
+          alert("Din data är återställd och synkad!");
         } catch (err) {
           alert("Kunde inte läsa in backup-filen.");
-        }
-      };
-      reader.readAsText(file);
-      event.target.value = "";
-    }
-
-    function exportAllUsers() {
-      const users = getUsers();
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2));
-      const a = document.createElement('a');
-      const dateStr = new Date().toISOString().slice(0, 10);
-      a.setAttribute("href", dataStr);
-      a.setAttribute("download", `loneapp-ALLA-ANVANDARE-${dateStr}.json`);
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-
-    function importAllUsers(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (typeof parsed !== "object") throw new Error("Ogiltig databasfil");
-          if (!confirm("VARNING: Detta skriver över hela databasen för samtliga användare. Fortsätt?")) return;
-          saveUsers(parsed);
-          populateMonthDropdown();
-          loadCurrentMonth();
-          alert("Hela användardatabasen återställd!");
-        } catch (err) {
-          alert("Kunde inte återställa databasen.");
         }
       };
       reader.readAsText(file);
@@ -1091,8 +1145,6 @@
       const totalTax = tableTax + oneTimeTax;
       
       const totalGrossDisplay = grossSalaryForPayout - preDeductions;
-      
-      // Netto = (Brutto - Total skatt - Nettoavdrag) + Externa bidrag/tillägg
       const netSalary = totalGrossDisplay - totalTax - netAdjustments + externalPayouts;
       
       const aga = Math.round(totalGrossDisplay * 0.3142);
@@ -1135,10 +1187,8 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("salary_app_active_user");
-      const users = getUsers();
-      if (saved && users[saved]) loginUser(saved);
-      else if (Object.keys(users).length === 1) loginUser(Object.keys(users)[0]);
+      const saved = localStorage.getItem("salary_app_active_user") || "knaspulkan";
+      loginUser(saved);
     });
   </script>
 </body>
