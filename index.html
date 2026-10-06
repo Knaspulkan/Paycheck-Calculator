@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Lönekalkylator v1.4.0</title>
+  <title>Lönekalkylator v1.4.2</title>
   
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -69,6 +69,8 @@
     .btn-small { background: #243046; color: var(--text); border: none; padding: 4px 7px; border-radius: 5px; cursor: pointer; font-size: 0.72rem; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
     .btn-small:hover { background: #334155; }
     .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-small.danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .btn-small.danger:hover { background: var(--danger); color: white; }
     .btn-pdf { background: #059669; color: white; }
     .btn-pdf:hover { background: #047857; }
     
@@ -91,22 +93,31 @@
       flex-wrap: wrap; 
       align-items: center; 
       justify-content: flex-start; 
-      gap: 24px; 
+      gap: 28px; 
       width: 100%; 
     }
     @media (max-width: 600px) {
-      .dashboard-center { justify-content: center; padding: 12px; gap: 14px; }
+      .dashboard-center { justify-content: center; padding: 12px; gap: 16px; }
     }
 
-    .donut-wrapper { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    /* Större cirkeldiagram (165px) för snyggare balans mot högersidan */
+    .donut-wrapper { 
+      position: relative; 
+      width: 165px; 
+      height: 165px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      flex-shrink: 0; 
+    }
     .donut-inner-text { position: absolute; text-align: center; pointer-events: none; }
-    .donut-inner-text small { display: block; font-size: 0.58rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
-    .donut-inner-text strong { display: block; font-size: 0.92rem; color: var(--accent); font-weight: 800; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
+    .donut-inner-text small { display: block; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .donut-inner-text strong { display: block; font-size: 1.15rem; color: var(--accent); font-weight: 800; line-height: 1.15; margin-top: 3px; white-space: nowrap; }
 
     .stacked-metrics { 
       display: flex; 
       flex-direction: column; 
-      gap: 5px; 
+      gap: 6px; 
       min-width: 200px; 
       flex: 1; 
       width: 100%; 
@@ -127,7 +138,7 @@
     .metric-row.pension { border-color: var(--pension-color); }
     .metric-row.skatt { border-color: var(--tax-color); }
     .metric-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 600; white-space: nowrap; }
-    .metric-val { font-size: 0.84rem; font-weight: 700; text-align: right; white-space: nowrap; }
+    .metric-val { font-size: 0.86rem; font-weight: 700; text-align: right; white-space: nowrap; }
 
     .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.78rem; width: 100%; }
     .settings-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -262,7 +273,7 @@
   <div class="container">
     <div id="authView" class="auth-wrap hidden">
       <div style="display:flex; justify-content:center; margin-bottom: 6px;">
-        <span class="version-tag">v1.4.0</span>
+        <span class="version-tag">v1.4.2</span>
       </div>
       <h2 id="authTitle">Logga in</h2>
       <div class="auth-field">
@@ -276,7 +287,7 @@
       <div class="app-header">
         <div class="app-title-wrap">
           <h1 style="font-size: 1.05rem;">Lönekalkylator</h1>
-          <span class="version-tag">v1.4.0</span>
+          <span class="version-tag">v1.4.2</span>
           <span class="sync-tag" id="syncStatusTag">🟢 Synkad</span>
         </div>
         <div class="user-info">
@@ -303,6 +314,7 @@
           <label for="monthSelect" style="font-size: 0.76rem; color: var(--muted);">Månad:</label>
           <select id="monthSelect" onchange="changeMonth(this.value)" style="max-width: 105px;"><option value="2026-10">2026-10</option></select>
           <button class="btn-small" onclick="renameCurrentMonth()" title="Ändra namn på denna månad">✏</button>
+          <button class="btn-small danger" onclick="deleteCurrentMonth()" title="Ta bort denna månad">🗑</button>
         </div>
         <button class="btn-month" onclick="createNewMonth()">+ Ny månad</button>
       </div>
@@ -350,7 +362,7 @@
 
       <div class="dashboard-center">
         <div class="donut-wrapper">
-          <svg id="donutChart" width="120" height="120" viewBox="0 0 42 42"></svg>
+          <svg id="donutChart" width="165" height="165" viewBox="0 0 42 42"></svg>
           <div class="donut-inner-text">
             <small>Nettolön</small>
             <strong id="center-netto">0 kr</strong>
@@ -384,7 +396,7 @@
       <div id="sections"></div>
 
       <footer class="app-footer">
-        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.4.0</strong> • Molnsynk via Firestore</div>
+        <div>Lönekalkylator PWA • <strong style="color: #38bdf8;">v1.4.2</strong> • Molnsynk via Firestore</div>
         <div style="font-size: 0.65rem; margin-top: 3px;">Kollektivavtalsberäkningar & Skatteverkets tabellskatt 2026</div>
       </footer>
     </div>
@@ -400,9 +412,9 @@
   </div>
 
   <script>
-    const APP_VERSION = "v1.4.0";
+    const APP_VERSION = "v1.4.2";
 
-    // --- FIREBASE KONFIGURATION & INITIERING ---
+    // --- FIREBASE KONFIGURATION ---
     const firebaseConfig = {
       apiKey: "AIzaSyDK_5AQgsDe8IHUhRHyKd3E0tQ96uumIgw",
       authDomain: "paycheck-calculator-34718.firebaseapp.com",
@@ -452,7 +464,7 @@
     (function setupPWA() {
       if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
         const swCode = `
-          const CACHE_NAME = 'loneapp-cache-v1-4-0';
+          const CACHE_NAME = 'loneapp-cache-v1-4-2';
           self.addEventListener('install', e => self.skipWaiting());
           self.addEventListener('activate', e => e.waitUntil(caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
           self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
@@ -678,7 +690,6 @@
           }
           setSyncStatus("synced");
         } else {
-          // Första gången användaren körs mot Firestore: Spara befintlig lokal data dit
           const localUsers = getUsers();
           if (localUsers[username]) {
             db.collection("users").doc(username).set(localUsers[username]);
@@ -897,6 +908,31 @@
       loadCurrentMonth();
     }
 
+    function deleteCurrentMonth() {
+      const users = getUsers();
+      const monthKeys = Object.keys(users[currentUser]?.months || {});
+      
+      if (monthKeys.length <= 1) {
+        return alert("Du kan inte ta bort din enda månad. Skapa en ny månad först.");
+      }
+
+      if (!confirm(`Är du säker på att du vill ta bort månaden "${currentMonthKey}"? Detta kan inte ångras.`)) {
+        return;
+      }
+
+      saveUndoState();
+      delete users[currentUser].months[currentMonthKey];
+
+      const remainingKeys = Object.keys(users[currentUser].months).sort();
+      const nextMonth = remainingKeys[remainingKeys.length - 1];
+      users[currentUser].currentMonth = nextMonth;
+      currentMonthKey = nextMonth;
+      saveUsers(users);
+
+      populateMonthDropdown();
+      loadCurrentMonth();
+    }
+
     function updateTaxSetting(key, val) {
       saveUndoState();
       const users = getUsers();
@@ -919,7 +955,7 @@
       const svg = document.getElementById("donutChart");
       const total = netto + totalSkatt + totalPension;
       if (total <= 0) {
-        svg.innerHTML = '<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>';
+        svg.innerHTML = '<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.8"></circle>';
         return;
       }
       const nPct = (netto / total) * 100;
@@ -927,10 +963,10 @@
       const pPct = (totalPension / total) * 100;
 
       svg.innerHTML = `
-        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.5"></circle>
-        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--accent)" stroke-width="4.5" stroke-dasharray="${nPct} ${100 - nPct}" stroke-dashoffset="25"></circle>
-        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--tax-color)" stroke-width="4.5" stroke-dasharray="${sPct} ${100 - sPct}" stroke-dashoffset="${25 - nPct}"></circle>
-        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--pension-color)" stroke-width="4.5" stroke-dasharray="${pPct} ${100 - pPct}" stroke-dashoffset="${25 - nPct - sPct}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#2c3a50" stroke-width="4.8"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--accent)" stroke-width="4.8" stroke-dasharray="${nPct} ${100 - nPct}" stroke-dashoffset="25"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--tax-color)" stroke-width="4.8" stroke-dasharray="${sPct} ${100 - sPct}" stroke-dashoffset="${25 - nPct}"></circle>
+        <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="var(--pension-color)" stroke-width="4.8" stroke-dasharray="${pPct} ${100 - pPct}" stroke-dashoffset="${25 - nPct - sPct}"></circle>
       `;
     }
 
